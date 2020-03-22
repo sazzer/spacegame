@@ -2,5 +2,13 @@
   "header": {
     "title": "Space Game",
     "toggleNavigation": "Toggle Navigation"
+  },
+  "homePage": {
+    "login": {
+      "title": "Login / Register",
+      "buttons": {
+        "google": "Sign In With Google"
+      }
+    }
   }
 }
