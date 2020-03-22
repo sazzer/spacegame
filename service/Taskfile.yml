@@ -1,0 +1,16 @@
+# https://taskfile.dev
+
+version: "2"
+
+tasks:
+  run:
+    cmds:
+      - go run cmd/spacegame/*.go
+
+  build:
+    cmds:
+      - go build -o build/spacegame cmd/spacegame/*.go
+
+  test:
+    cmds:
+      - go test ./...
