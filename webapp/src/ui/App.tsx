@@ -1,3 +1,4 @@
+import { Header } from "./header";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -6,7 +7,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">{t("title")}</header>
+      <Header />
     </div>
   );
 }

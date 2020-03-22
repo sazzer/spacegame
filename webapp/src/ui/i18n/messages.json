@@ -1,3 +1,6 @@
 {
-  "title": "Space Game"
+  "header": {
+    "title": "Space Game",
+    "toggleNavigation": "Toggle Navigation"
+  }
 }
