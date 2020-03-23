@@ -7,5 +7,7 @@ import (
 )
 
 func main() {
+	_ = LoadConfig()
+
 	fmt.Printf("hello, world\n")
 }
