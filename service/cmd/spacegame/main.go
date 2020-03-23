@@ -15,6 +15,6 @@ func main() {
 	config := LoadConfig()
 	logrus.WithField("config", config).Debug("Loaded application config")
 
-	service := internal.New()
+	service := internal.New(config.DatabaseURL)
 	service.Start(config.Port)
 }

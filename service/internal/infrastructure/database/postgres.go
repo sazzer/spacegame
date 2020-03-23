@@ -1,0 +1,29 @@
+package database
+
+import (
+	"github.com/jmoiron/sqlx"
+	// Postgres database drivers
+	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
+)
+
+// PostgresDatabase represents a connection to the database
+type PostgresDatabase struct {
+	db *sqlx.DB
+}
+
+// NewPostgresDatabase opens a new database connection pool to access the database with
+func NewPostgresDatabase(url string) PostgresDatabase {
+	db, err := sqlx.Open("postgres", url)
+	if err != nil {
+		logrus.WithField("url", url).WithError(err).Fatal("Failed to open database connection")
+	}
+
+	err = db.Ping()
+	if err != nil {
+		logrus.WithField("url", url).WithError(err).Fatal("Failed to ping database connection")
+	}
+
+	logrus.WithField("url", url).Debug("Connected to database")
+	return PostgresDatabase{db: db}
+}

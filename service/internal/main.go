@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/sazzer/spacegame/service/internal/infrastructure/database"
 	"github.com/sazzer/spacegame/service/internal/infrastructure/server"
 	"github.com/sirupsen/logrus"
 )
@@ -11,7 +12,8 @@ type Service struct {
 }
 
 // New builds the entire service ready to work with
-func New() Service {
+func New(databaseURL string) Service {
+	_ = database.NewPostgresDatabase(databaseURL)
 	server := server.New()
 	return Service{server}
 }
