@@ -8,7 +8,7 @@ import (
 
 // Config represents the configuration of the application, as loaded from the environment
 type Config struct {
-	Port uint16
+	Port uint16 `required:"true" default:"8000" envconfig:"PORT"`
 }
 
 // LoadConfig loads the configuration from the environment ready for us to use
