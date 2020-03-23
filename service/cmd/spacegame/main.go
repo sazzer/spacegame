@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
-
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/sazzer/spacegame/service/internal"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,5 +15,6 @@ func main() {
 	config := LoadConfig()
 	logrus.WithField("config", config).Debug("Loaded application config")
 
-	fmt.Printf("hello, world\n")
+	service := internal.New()
+	service.Start(config.Port)
 }
