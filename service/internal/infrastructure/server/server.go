@@ -15,7 +15,7 @@ type Server struct {
 }
 
 // New creates a new instance of the web server
-func New() Server {
+func New(routes []Router) Server {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
@@ -24,10 +24,16 @@ func New() Server {
 	}))
 	e.Use(middleware.Recover())
 
+	for _, router := range routes {
+		router.RegisterRoutes(e)
+	}
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
+	for _, route := range e.Routes() {
+		logrus.WithField("method", route.Method).WithField("path", route.Path).Info("Route")
+	}
 	return Server{server: e}
 }
 

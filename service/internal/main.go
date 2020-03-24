@@ -23,7 +23,9 @@ func New(databaseURL string) Service {
 		logrus.Debug("System is initially healthy")
 	}
 
-	server := server.New()
+	server := server.New([]server.Router{
+		health.NewRoutes(healthchecker),
+	})
 	return Service{server}
 }
 
