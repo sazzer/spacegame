@@ -38,7 +38,7 @@ func New(routes []Router) Server {
 }
 
 // Start will start the web server listening on the given port
-func (server Server) Start(port uint16) {
+func (server *Server) Start(port uint16) {
 	err := server.server.Start(fmt.Sprintf(":%d", port))
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to start web server")

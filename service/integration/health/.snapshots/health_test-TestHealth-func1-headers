@@ -1,0 +1,15 @@
+(http.Header) (len=4) {
+  (string) (len=32) "Access-Control-Allow-Credentials": ([]string) (len=1) {
+    (string) (len=4) "true"
+  },
+  (string) (len=27) "Access-Control-Allow-Origin": ([]string) (len=1) {
+    (string) ""
+  },
+  (string) (len=12) "Content-Type": ([]string) (len=1) {
+    (string) (len=31) "application/json; charset=UTF-8"
+  },
+  (string) (len=4) "Vary": ([]string) (len=2) {
+    (string) (len=15) "Accept-Encoding",
+    (string) (len=6) "Origin"
+  }
+}

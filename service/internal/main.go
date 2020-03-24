@@ -1,6 +1,9 @@
 package internal
 
 import (
+	"net/http"
+	"net/http/httptest"
+
 	"github.com/sazzer/spacegame/service/internal/infrastructure/database"
 	"github.com/sazzer/spacegame/service/internal/infrastructure/health"
 	"github.com/sazzer/spacegame/service/internal/infrastructure/server"
@@ -13,9 +16,9 @@ type Service struct {
 }
 
 // New builds the entire service ready to work with
-func New(databaseURL string) Service {
+func New(databaseURL string, migrations string) Service {
 	db := database.NewPostgresDatabase(databaseURL)
-	database.MigrateDatabaseSchema(databaseURL, "file://./migrations")
+	database.MigrateDatabaseSchema(databaseURL, migrations)
 
 	healthchecker := health.NewHealthchecker().AddComponent("database", &db)
 	if systemHealth := healthchecker.CheckSystemHealth(); systemHealth.Health() != health.HealthSuccess {
@@ -31,7 +34,12 @@ func New(databaseURL string) Service {
 }
 
 // Start will start the service listening on the given port
-func (service Service) Start(port uint16) {
+func (service *Service) Start(port uint16) {
 	logrus.WithField("port", port).Info("Starting...")
 	service.server.Start(port)
+}
+
+// ServeHTTP will send a request to the server and return the response
+func (service *Service) ServeHTTP(r *http.Request) *httptest.ResponseRecorder {
+	return service.server.ServeHTTP(r)
 }
