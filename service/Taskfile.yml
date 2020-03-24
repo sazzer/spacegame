@@ -9,7 +9,7 @@ tasks:
 
   build:
     cmds:
-      - go build -o build/spacegame cmd/spacegame/*.go
+      - go build -gcflags="-m" -o build/spacegame cmd/spacegame/*.go
 
   test:
     cmds:

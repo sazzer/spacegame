@@ -19,11 +19,12 @@ func NewPostgresDatabase(url string) PostgresDatabase {
 		logrus.WithField("url", url).WithError(err).Fatal("Failed to open database connection")
 	}
 
-	err = db.Ping()
-	if err != nil {
-		logrus.WithField("url", url).WithError(err).Fatal("Failed to ping database connection")
-	}
-
 	logrus.WithField("url", url).Debug("Connected to database")
 	return PostgresDatabase{db: db}
+}
+
+// CheckComponentHealth checks if the database connection is healthy by performing a ping to the database
+// and seeing what comes back
+func (p PostgresDatabase) CheckComponentHealth() error {
+	return p.db.Ping()
 }

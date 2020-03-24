@@ -2,6 +2,7 @@ package internal
 
 import (
 	"github.com/sazzer/spacegame/service/internal/infrastructure/database"
+	"github.com/sazzer/spacegame/service/internal/infrastructure/health"
 	"github.com/sazzer/spacegame/service/internal/infrastructure/server"
 	"github.com/sirupsen/logrus"
 )
@@ -13,7 +14,15 @@ type Service struct {
 
 // New builds the entire service ready to work with
 func New(databaseURL string) Service {
-	_ = database.NewPostgresDatabase(databaseURL)
+	database := database.NewPostgresDatabase(databaseURL)
+
+	healthchecker := health.NewHealthchecker().AddComponent("database", &database)
+	if systemHealth := healthchecker.CheckSystemHealth(); systemHealth.Health() != health.HealthSuccess {
+		logrus.WithField("components", systemHealth.Components()).Fatal("System is not initially healthy")
+	} else {
+		logrus.Debug("System is initially healthy")
+	}
+
 	server := server.New()
 	return Service{server}
 }

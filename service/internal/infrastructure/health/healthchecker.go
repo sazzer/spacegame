@@ -1,14 +1,14 @@
 package health
 
 // Status indicates whether a component or the entire system is health or not
-type Status int
+type Status string
 
 const (
 	// HealthSuccess indicates that the component or system is healthy
-	HealthSuccess Status = iota
+	HealthSuccess Status = "PASS"
 
 	// HealthFailure indicates that the component or system is unhealthy
-	HealthFailure Status = iota
+	HealthFailure Status = "FAIL"
 )
 
 // ComponentHealth represents the health of a single component
