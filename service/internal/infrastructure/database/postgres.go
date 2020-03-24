@@ -9,7 +9,8 @@ import (
 
 // PostgresDatabase represents a connection to the database
 type PostgresDatabase struct {
-	db *sqlx.DB
+	url string
+	db  *sqlx.DB
 }
 
 // NewPostgresDatabase opens a new database connection pool to access the database with
@@ -20,7 +21,7 @@ func NewPostgresDatabase(url string) PostgresDatabase {
 	}
 
 	logrus.WithField("url", url).Debug("Connected to database")
-	return PostgresDatabase{db: db}
+	return PostgresDatabase{db: db, url: url}
 }
 
 // CheckComponentHealth checks if the database connection is healthy by performing a ping to the database

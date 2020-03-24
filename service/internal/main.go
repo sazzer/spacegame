@@ -15,6 +15,7 @@ type Service struct {
 // New builds the entire service ready to work with
 func New(databaseURL string) Service {
 	database := database.NewPostgresDatabase(databaseURL)
+	database.MigrateDatabaseSchema("file://./migrations")
 
 	healthchecker := health.NewHealthchecker().AddComponent("database", &database)
 	if systemHealth := healthchecker.CheckSystemHealth(); systemHealth.Health() != health.HealthSuccess {
