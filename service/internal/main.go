@@ -14,10 +14,10 @@ type Service struct {
 
 // New builds the entire service ready to work with
 func New(databaseURL string) Service {
-	database := database.NewPostgresDatabase(databaseURL)
-	database.MigrateDatabaseSchema("file://./migrations")
+	db := database.NewPostgresDatabase(databaseURL)
+	database.MigrateDatabaseSchema(databaseURL, "file://./migrations")
 
-	healthchecker := health.NewHealthchecker().AddComponent("database", &database)
+	healthchecker := health.NewHealthchecker().AddComponent("database", &db)
 	if systemHealth := healthchecker.CheckSystemHealth(); systemHealth.Health() != health.HealthSuccess {
 		logrus.WithField("components", systemHealth.Components()).Fatal("System is not initially healthy")
 	} else {

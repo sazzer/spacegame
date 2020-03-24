@@ -11,10 +11,10 @@ import (
 )
 
 // MigrateDatabaseSchema will cause the database schema to be migrated to the latest version
-func (p PostgresDatabase) MigrateDatabaseSchema(migrations string) error {
-	m, err := migrate.New(migrations, p.url)
+func MigrateDatabaseSchema(url string, migrations string) error {
+	m, err := migrate.New(migrations, url)
 	if err != nil {
-		logrus.WithError(err).WithField("migrations", migrations).WithField("url", p.url).Fatal("Failed to load migrations")
+		logrus.WithError(err).WithField("migrations", migrations).WithField("url", url).Fatal("Failed to load migrations")
 		return err
 	}
 
@@ -23,7 +23,7 @@ func (p PostgresDatabase) MigrateDatabaseSchema(migrations string) error {
 
 	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		logrus.WithError(err).WithField("migrations", migrations).WithField("url", p.url).Fatal("Failed to apply migrations")
+		logrus.WithError(err).WithField("migrations", migrations).WithField("url", url).Fatal("Failed to apply migrations")
 		return err
 	}
 
