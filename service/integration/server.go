@@ -32,7 +32,7 @@ func RunTest(t *testing.T, test func(TestableService)) {
 	url, err := db.URL()
 	assert.NoError(t, err)
 
-	service := internal.New(url, "file://../../migrations")
+	service := internal.New(url)
 
 	test(&service)
 }

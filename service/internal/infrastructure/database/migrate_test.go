@@ -16,6 +16,21 @@ func TestMigrate(t *testing.T) {
 	url, err := wrapper.URL()
 	assert.NoError(t, err)
 
-	err = database.MigrateDatabaseSchema(url, "file://../../../migrations")
+	err = database.MigrateDatabaseSchema(url)
+	assert.NoError(t, err)
+}
+
+func TestMigrateAgain(t *testing.T) {
+	wrapper, err := testdatabase.NewDatabaseWrapper()
+	assert.NoError(t, err)
+	defer wrapper.Close()
+
+	url, err := wrapper.URL()
+	assert.NoError(t, err)
+
+	err = database.MigrateDatabaseSchema(url)
+	assert.NoError(t, err)
+
+	err = database.MigrateDatabaseSchema(url)
 	assert.NoError(t, err)
 }

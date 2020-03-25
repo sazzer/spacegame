@@ -7,10 +7,7 @@
       "label": "go start",
       "type": "shell",
       "command": "go",
-      "args": [
-        "run",
-        "cmd/spacegame/*.go"
-      ],
+      "args": ["run", "cmd/spacegame/*.go"],
       "group": "build",
       "promptOnClose": false,
       "isBackground": true,
@@ -22,9 +19,13 @@
         "showReuseMessage": true,
         "clear": true
       },
-      "problemMatcher": [
-        "$go"
-      ]
+      "problemMatcher": ["$go"],
+      "options": {
+        "env": {
+          "PARCELLO_DEV_ENABLED": "1",
+          "PARCELLO_RESOURCE_DIR": "./internal/infrastructure/database/migrations"
+        }
+      }
     }
   ]
 }

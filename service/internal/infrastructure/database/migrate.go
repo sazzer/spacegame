@@ -1,7 +1,10 @@
 package database
 
+//go:generate parcello -r -d migrations
+
 import (
 	"github.com/golang-migrate/migrate/v4"
+
 	// Migrate drivers for Postgres
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	// Migrate drivers for loading migrations from the filesystem
@@ -11,10 +14,10 @@ import (
 )
 
 // MigrateDatabaseSchema will cause the database schema to be migrated to the latest version
-func MigrateDatabaseSchema(url string, migrations string) error {
-	m, err := migrate.New(migrations, url)
+func MigrateDatabaseSchema(url string) error {
+	m, err := migrate.NewWithSourceInstance("parcello", newParcelloSource(), url)
 	if err != nil {
-		logrus.WithError(err).WithField("migrations", migrations).WithField("url", url).Fatal("Failed to load migrations")
+		logrus.WithError(err).WithField("url", url).Fatal("Failed to load migrations")
 		return err
 	}
 
@@ -23,7 +26,7 @@ func MigrateDatabaseSchema(url string, migrations string) error {
 
 	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		logrus.WithError(err).WithField("migrations", migrations).WithField("url", url).Fatal("Failed to apply migrations")
+		logrus.WithError(err).WithField("url", url).Fatal("Failed to apply migrations")
 		return err
 	}
 

@@ -3,18 +3,28 @@
 version: "2"
 
 tasks:
+  generate:
+    cmds:
+      - go generate ./...
+
   run:
+    env:
+      PARCELLO_DEV_ENABLED: 1
+      PARCELLO_RESOURCE_DIR: ./internal/infrastructure/database/migrations
     cmds:
       - go run cmd/spacegame/*.go
 
   build:
+    deps: [generate]
     cmds:
       - go build -gcflags="-m" -o build/spacegame cmd/spacegame/*.go
 
   test:
+    deps: [generate]
     cmds:
       - go test ./internal/...
 
   integration:
+    deps: [generate]
     cmds:
       - go test ./integration/...
