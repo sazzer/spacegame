@@ -1,17 +1,16 @@
-package database_test
+package database
 
 import (
 	"testing"
 
-	"github.com/sazzer/spacegame/service/internal/infrastructure/database"
 	testdatabase "github.com/sazzer/spacegame/service/testing/database"
 	"github.com/stretchr/testify/assert"
 )
 
-// The test database to work with
+// TestDatabase is the test database to work with
 type TestDatabase struct {
 	wrapper testdatabase.Wrapper
-	db      database.PostgresDatabase
+	db      PostgresDatabase
 }
 
 // NewTestDatabase will create a new test database, starting the database wrapper,
@@ -23,10 +22,10 @@ func NewTestDatabase(t *testing.T) TestDatabase {
 	url, err := wrapper.URL()
 	assert.NoError(t, err)
 
-	err = database.MigrateDatabaseSchema(url)
+	err = MigrateDatabaseSchema(url)
 	assert.NoError(t, err)
 
-	db := database.NewPostgresDatabase(url)
+	db := NewPostgresDatabase(url)
 
 	return TestDatabase{
 		wrapper: wrapper,
@@ -35,6 +34,11 @@ func NewTestDatabase(t *testing.T) TestDatabase {
 }
 
 // Close will close the test database when we're finished
-func (t TestDatabase) Close() {
+func (t *TestDatabase) Close() {
 	t.wrapper.Close()
+}
+
+// DB returns the actual database connection
+func (t *TestDatabase) DB() PostgresDatabase {
+	return t.db
 }

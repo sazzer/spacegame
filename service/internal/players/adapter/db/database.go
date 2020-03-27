@@ -1,13 +1,13 @@
-package database
+package db
 
-import db "github.com/sazzer/spacegame/service/internal/infrastructure/database"
+import "github.com/sazzer/spacegame/service/internal/infrastructure/database"
 
 // PlayerDatabase represents the access to the database for working with players
 type PlayerDatabase struct {
-	db db.Database
+	db database.Database
 }
 
 // NewPlayerDatabase will construct a new PlayerDatabase instance
-func NewPlayerDatabase(db db.Database) PlayerDatabase {
+func NewPlayerDatabase(db database.Database) PlayerDatabase {
 	return PlayerDatabase{db}
 }
