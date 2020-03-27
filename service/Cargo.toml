@@ -14,3 +14,5 @@ name="spacegame"
 dotenv = "0.15.0"
 serde = {version = "1.0.105", features=["derive"] }
 config = "0.10.1"
+env_logger = "0.7.1"
+log = "0.4.8"

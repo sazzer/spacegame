@@ -21,6 +21,10 @@ impl Settings {
 /// Actually start the application
 fn main() {
     dotenv().ok();
-    let _ = Settings::new();
+    env_logger::init();
+
+    let settings = Settings::new();
+    log::info!("Settings: {:?}", settings);
+
     spacegame_lib::main()
 }
