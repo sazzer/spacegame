@@ -11,3 +11,6 @@ name = "spacegame_lib"
 name="spacegame"
 
 [dependencies]
+dotenv = "0.15.0"
+serde = {version = "1.0.105", features=["derive"] }
+config = "0.10.1"
