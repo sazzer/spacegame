@@ -1,23 +1,11 @@
-use super::server::Server;
+use super::{database::Database, server::Server};
 use actix_web::{web, HttpResponse, Responder};
 use std::sync::Arc;
 
-trait FakeService {
-  fn name(&self) -> &String;
-}
-struct FakeServiceImpl {
-  name: String,
-}
+async fn index(data: web::Data<Database>) -> impl Responder {
+  data.ping().await;
 
-impl FakeService for FakeServiceImpl {
-  fn name(&self) -> &String {
-    &self.name
-  }
-}
-
-async fn index(data: web::Data<Arc<dyn FakeService>>) -> impl Responder {
-  let output = format!("Hello {}: {:p}\n\n", &data.name(), &data.name());
-  HttpResponse::Ok().body(output)
+  HttpResponse::Ok().body("Hello")
 }
 
 fn config(cfg: &mut web::ServiceConfig) {
@@ -31,16 +19,15 @@ pub struct Service {
 
 impl Service {
   /// Construct a new service
-  pub fn new() -> Self {
+  pub async fn new() -> Self {
     log::info!("Building Service");
-    let service = Arc::new(FakeServiceImpl {
-      name: "Name".to_owned(),
-    });
+    let database: Database =
+      Database::new("postgres://spacegame:spacegame@localhost:45432/spacegame").await;
 
     let server = Server::new(vec![
       Arc::new(config),
       Arc::new(move |cfg| {
-        cfg.data(service.clone() as Arc<dyn FakeService>);
+        cfg.data(database.clone());
       }),
     ]);
 
