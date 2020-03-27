@@ -1,3 +1,4 @@
+use actix_cors::Cors;
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use std::ops::Deref;
 use std::sync::Arc;
@@ -23,7 +24,9 @@ impl Server {
 
     HttpServer::new(move || {
       let configs = configs.clone();
-      let mut app = App::new().wrap(Logger::default());
+      let mut app = App::new()
+        .wrap(Logger::default())
+        .wrap(Cors::new().finish());
       for config in configs.iter() {
         app = app.configure(config.deref());
       }
