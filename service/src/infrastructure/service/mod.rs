@@ -15,7 +15,7 @@ impl Service {
   }
 
   /// Start the service running
-  pub fn start(&self, port: u16) {
-    self.server.start(port);
+  pub async fn start(&self, port: u16) {
+    self.server.start(port).await;
   }
 }

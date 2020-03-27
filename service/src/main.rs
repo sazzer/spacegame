@@ -19,12 +19,13 @@ impl Settings {
 }
 
 /// Actually start the application
-fn main() {
+#[actix_rt::main]
+async fn main() {
     dotenv().ok();
     env_logger::init();
 
     let settings = Settings::new();
     log::info!("Settings: {:?}", settings);
 
-    spacegame_lib::main(settings.port.unwrap_or(8000))
+    spacegame_lib::main(settings.port.unwrap_or(8000)).await
 }
