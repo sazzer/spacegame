@@ -1,4 +1,4 @@
-use actix_web::{web, App, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 use std::ops::Deref;
 use std::sync::Arc;
 
@@ -23,7 +23,7 @@ impl Server {
 
     HttpServer::new(move || {
       let configs = configs.clone();
-      let mut app = App::new();
+      let mut app = App::new().wrap(Logger::default());
       for config in configs.iter() {
         app = app.configure(config.deref());
       }
