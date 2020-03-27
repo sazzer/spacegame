@@ -1,20 +1,16 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
-
-async fn index() -> impl Responder {
-  HttpResponse::Ok().body("Hello world!")
-}
-
-async fn index2() -> impl Responder {
-  HttpResponse::Ok().body("Hello world again!")
-}
+use actix_web::{web, App, HttpServer};
+use std::ops::Deref;
+use std::sync::Arc;
 
 /// The actual web server to use
-pub struct Server {}
+pub struct Server {
+  configs: Vec<Arc<dyn Fn(&mut web::ServiceConfig) + Send + Sync>>,
+}
 
 impl Server {
   /// Construct a new web server
-  pub fn new() -> Self {
-    Server {}
+  pub fn new(configs: Vec<Arc<dyn Fn(&mut web::ServiceConfig) + Send + Sync>>) -> Self {
+    Server { configs }
   }
 
   /// Start the service running
@@ -23,10 +19,15 @@ impl Server {
 
     let listen_address = format!("0.0.0.0:{}", port);
 
-    HttpServer::new(|| {
-      App::new()
-        .route("/", web::get().to(index))
-        .route("/again", web::get().to(index2))
+    let configs = self.configs.clone();
+
+    HttpServer::new(move || {
+      let configs = configs.clone();
+      let mut app = App::new();
+      for config in configs.iter() {
+        app = app.configure(config.deref());
+      }
+      app
     })
     .bind(listen_address)
     .unwrap()
