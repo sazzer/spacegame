@@ -26,5 +26,5 @@ fn main() {
     let settings = Settings::new();
     log::info!("Settings: {:?}", settings);
 
-    spacegame_lib::main()
+    spacegame_lib::main(settings.port.unwrap_or(8000))
 }
