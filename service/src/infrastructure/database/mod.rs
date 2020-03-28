@@ -1,4 +1,5 @@
 use crate::infrastructure::health::*;
+use async_trait::async_trait;
 use bb8::Pool;
 use bb8_postgres::PostgresConnectionManager;
 use std::str::FromStr;
@@ -24,6 +25,7 @@ impl Database {
     let pool = Pool::builder()
       .min_idle(Some(3))
       .max_size(5)
+      .connection_timeout(std::time::Duration::from_secs(10))
       .build(manager)
       .await
       .unwrap();
@@ -43,8 +45,15 @@ impl Database {
   }
 }
 
+#[async_trait]
 impl Component for Database {
-  fn check_health(&self) -> Status {
-    Status::Healthy
+  async fn check_health(&self) -> Status {
+    let sql = format!("SELECT {:p}", &self);
+
+    log::info!("Pinging database");
+    match self.pool.get().await {
+      Ok(conn) => conn.simple_query(&sql).await.into(),
+      Err(err) => Status::Unhealthy(format!("Failed to get connection: {}", err)),
+    }
   }
 }

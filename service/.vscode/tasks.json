@@ -21,9 +21,27 @@
         "showReuseMessage": true,
         "clear": true
       },
-      "problemMatcher": [
-        "$rustc"
-      ]
+      "problemMatcher": ["$rustc"]
+    },
+    {
+      "label": "cargo test",
+      "type": "shell",
+      "command": "cargo test",
+      "group": "test",
+      "options": {
+        "env": {
+          "DEBUG": "*"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      },
+      "problemMatcher": ["$rustc"]
     }
   ]
 }

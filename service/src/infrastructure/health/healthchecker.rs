@@ -28,12 +28,13 @@ impl Healthchecker {
   }
 
   // Actually check the health of the system
-  pub fn check_health(&self) -> SystemHealth {
-    let components: HashMap<String, Status> = self
-      .checks
-      .iter()
-      .map(|(key, value)| (key.to_owned(), value.check_health()))
-      .collect();
+  pub async fn check_health(&self) -> SystemHealth {
+    let mut components: HashMap<String, Status> = HashMap::new();
+
+    for (k, v) in self.checks.iter() {
+      let result = v.check_health().await;
+      components.insert(k.to_owned(), result);
+    }
 
     let healthy = components
       .iter()
@@ -54,13 +55,15 @@ impl Healthchecker {
 #[cfg(test)]
 mod tests {
   use super::*;
+  use async_trait::async_trait;
   use galvanic_assert::{
     assert_that,
     matchers::{variant::*, *},
   };
 
+  #[async_trait]
   impl Component for String {
-    fn check_health(&self) -> Status {
+    async fn check_health(&self) -> Status {
       if "" == self {
         Status::Healthy
       } else {
@@ -69,24 +72,24 @@ mod tests {
     }
   }
 
-  #[test]
-  fn test_no_checks() {
+  #[tokio::test]
+  async fn test_no_checks() {
     let sut = Healthchecker::new(HashMap::new());
-    let result = sut.check_health();
+    let result = sut.check_health().await;
 
     assert_that!(&result.status, eq(SystemStatus::Healthy));
     assert_that!(&result.components.len(), eq(0));
   }
 
-  #[test]
-  fn test_passing_check() {
+  #[tokio::test]
+  async fn test_passing_check() {
     let mut checks = HashMap::new();
     checks.insert(
       "passing".to_owned(),
       Arc::new("".to_owned()) as Arc<dyn Component>,
     );
     let sut = Healthchecker::new(checks);
-    let result = sut.check_health();
+    let result = sut.check_health().await;
 
     assert_that!(&result.status, eq(SystemStatus::Healthy));
     assert_that!(&result.components.len(), eq(1));
@@ -96,15 +99,15 @@ mod tests {
     );
   }
 
-  #[test]
-  fn test_failing_check() {
+  #[tokio::test]
+  async fn test_failing_check() {
     let mut checks = HashMap::new();
     checks.insert(
       "failing".to_owned(),
       Arc::new("Failing".to_owned()) as Arc<dyn Component>,
     );
     let sut = Healthchecker::new(checks);
-    let result = sut.check_health();
+    let result = sut.check_health().await;
 
     assert_that!(&result.status, eq(SystemStatus::Unhealthy));
     assert_that!(&result.components.len(), eq(1));
@@ -115,8 +118,8 @@ mod tests {
     );
   }
 
-  #[test]
-  fn test_mixed_check() {
+  #[tokio::test]
+  async fn test_mixed_check() {
     let mut checks = HashMap::new();
     checks.insert(
       "passing".to_owned(),
@@ -127,7 +130,7 @@ mod tests {
       Arc::new("Failing".to_owned()) as Arc<dyn Component>,
     );
     let sut = Healthchecker::new(checks);
-    let result = sut.check_health();
+    let result = sut.check_health().await;
 
     assert_that!(&result.status, eq(SystemStatus::Unhealthy));
     assert_that!(&result.components.len(), eq(2));

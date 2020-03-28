@@ -34,7 +34,7 @@ impl From<Status> for HealthcheckComponentResponse {
 }
 
 pub async fn check_health(healthchecker: web::Data<Healthchecker>) -> impl Responder {
-  let health = healthchecker.check_health();
+  let health = healthchecker.check_health().await;
 
   let components = health
     .components

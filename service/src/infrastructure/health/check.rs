@@ -1,3 +1,5 @@
+use async_trait::async_trait;
+
 /// The status of some component in the system
 #[derive(Debug, PartialEq)]
 pub enum Status {
@@ -8,9 +10,10 @@ pub enum Status {
 }
 
 /// Trait that any component able to report on it's health can implement
+#[async_trait]
 pub trait Component: Send + Sync {
   /// Check the health of this component
-  fn check_health(&self) -> Status;
+  async fn check_health(&self) -> Status;
 }
 
 impl<S, E> From<Result<S, E>> for Status
