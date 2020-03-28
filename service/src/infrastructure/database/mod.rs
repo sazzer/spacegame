@@ -1,3 +1,4 @@
+use crate::infrastructure::health::*;
 use bb8::Pool;
 use bb8_postgres::PostgresConnectionManager;
 use std::str::FromStr;
@@ -39,5 +40,11 @@ impl Database {
 
     async_std::task::sleep(std::time::Duration::from_secs(1)).await;
     log::info!("Pinged database");
+  }
+}
+
+impl Component for Database {
+  fn check_health(&self) -> Status {
+    Status::Healthy
   }
 }
