@@ -39,7 +39,7 @@ impl Healthchecker {
     let healthy = components
       .iter()
       .map(|(_, value)| value)
-      .all(|value| value == &Status::Healthy);
+      .all(|value| value.is_ok());
 
     SystemHealth {
       status: if healthy {
@@ -62,13 +62,9 @@ mod tests {
   };
 
   #[async_trait]
-  impl Component for String {
+  impl Component for Status {
     async fn check_health(&self) -> Status {
-      if "" == self {
-        Status::Healthy
-      } else {
-        Status::Unhealthy(self.to_owned())
-      }
+      self.clone()
     }
   }
 
@@ -86,17 +82,14 @@ mod tests {
     let mut checks = HashMap::new();
     checks.insert(
       "passing".to_owned(),
-      Arc::new("".to_owned()) as Arc<dyn Component>,
+      Arc::new(Ok(()).to_owned()) as Arc<dyn Component>,
     );
     let sut = Healthchecker::new(checks);
     let result = sut.check_health().await;
 
     assert_that!(&result.status, eq(SystemStatus::Healthy));
     assert_that!(&result.components.len(), eq(1));
-    assert_that!(
-      &result.components.get("passing"),
-      maybe_some(eq(&Status::Healthy))
-    );
+    assert_that!(&result.components.get("passing"), maybe_some(eq(&Ok(()))));
   }
 
   #[tokio::test]
@@ -104,14 +97,14 @@ mod tests {
     let mut checks = HashMap::new();
     checks.insert(
       "failing".to_owned(),
-      Arc::new("Failing".to_owned()) as Arc<dyn Component>,
+      Arc::new(Err("Failing".to_owned())) as Arc<dyn Component>,
     );
     let sut = Healthchecker::new(checks);
     let result = sut.check_health().await;
 
     assert_that!(&result.status, eq(SystemStatus::Unhealthy));
     assert_that!(&result.components.len(), eq(1));
-    let failing_message = Status::Unhealthy("Failing".to_owned());
+    let failing_message = Err("Failing".to_owned());
     assert_that!(
       &result.components.get("failing"),
       maybe_some(eq(&failing_message))
@@ -121,24 +114,18 @@ mod tests {
   #[tokio::test]
   async fn test_mixed_check() {
     let mut checks = HashMap::new();
-    checks.insert(
-      "passing".to_owned(),
-      Arc::new("".to_owned()) as Arc<dyn Component>,
-    );
+    checks.insert("passing".to_owned(), Arc::new(Ok(())) as Arc<dyn Component>);
     checks.insert(
       "failing".to_owned(),
-      Arc::new("Failing".to_owned()) as Arc<dyn Component>,
+      Arc::new(Err("Failing".to_owned())) as Arc<dyn Component>,
     );
     let sut = Healthchecker::new(checks);
     let result = sut.check_health().await;
 
     assert_that!(&result.status, eq(SystemStatus::Unhealthy));
     assert_that!(&result.components.len(), eq(2));
-    assert_that!(
-      &result.components.get("passing"),
-      maybe_some(eq(&Status::Healthy))
-    );
-    let failing_message = Status::Unhealthy("Failing".to_owned());
+    assert_that!(&result.components.get("passing"), maybe_some(eq(&Ok(()))));
+    let failing_message = Err("Failing".to_owned());
     assert_that!(
       &result.components.get("failing"),
       maybe_some(eq(&failing_message))

@@ -48,12 +48,16 @@ impl Database {
 #[async_trait]
 impl Component for Database {
   async fn check_health(&self) -> Status {
-    let sql = format!("SELECT {:p}", &self);
-
     log::info!("Pinging database");
-    match self.pool.get().await {
-      Ok(conn) => conn.simple_query(&sql).await.into(),
-      Err(err) => Status::Unhealthy(format!("Failed to get connection: {}", err)),
-    }
+    let conn = self
+      .pool
+      .get()
+      .await
+      .map_err(|e| format!("Failed to get connection: {}", e))?;
+    conn
+      .simple_query("SELECT 1")
+      .await
+      .map_err(|e| format!("Failed to ping database: {}", e))?;
+    Ok(())
   }
 }

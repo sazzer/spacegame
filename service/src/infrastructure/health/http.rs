@@ -21,11 +21,11 @@ struct HealthcheckResponse {
 impl From<Status> for HealthcheckComponentResponse {
   fn from(status: Status) -> Self {
     match status {
-      Status::Healthy => HealthcheckComponentResponse {
+      Ok(_) => HealthcheckComponentResponse {
         status: STATUS_HEALTHY,
         message: None,
       },
-      Status::Unhealthy(msg) => HealthcheckComponentResponse {
+      Err(msg) => HealthcheckComponentResponse {
         status: STATUS_UNHEALTHY,
         message: Some(msg.to_owned()),
       },
