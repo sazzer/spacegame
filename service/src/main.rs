@@ -6,6 +6,7 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 struct Settings {
     pub port: Option<u16>,
+    pub database_url: String,
 }
 
 impl Settings {
@@ -27,5 +28,8 @@ async fn main() {
     let settings = Settings::new();
     log::info!("Settings: {:?}", settings);
 
-    spacegame_lib::main(settings.port.unwrap_or(8000)).await
+    let service_settings = spacegame_lib::ServiceSettings {
+        database_url: settings.database_url,
+    };
+    spacegame_lib::main(settings.port.unwrap_or(8000), service_settings).await
 }

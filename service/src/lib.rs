@@ -1,12 +1,15 @@
 #![feature(async_closure)]
 
-mod infrastructure;
+pub mod infrastructure;
+pub mod testdatabase;
 
 use infrastructure::service::Service;
 
-pub async fn main(port: u16) {
+pub use infrastructure::service::ServiceSettings;
+
+pub async fn main(port: u16, settings: ServiceSettings) {
   log::info!("Starting Service");
-  let service = Service::new().await;
+  let service = Service::new(settings).await;
 
   service.start(port).await;
 }

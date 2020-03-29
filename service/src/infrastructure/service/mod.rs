@@ -1,16 +1,11 @@
 use super::{database::Database, server::Server};
-use actix_web::{web, HttpResponse, Responder};
 use std::collections::HashMap;
 use std::sync::Arc;
 
-async fn index(data: web::Data<Database>) -> impl Responder {
-  data.ping().await;
-
-  HttpResponse::Ok().body("Hello")
-}
-
-fn config(cfg: &mut web::ServiceConfig) {
-  cfg.route("/", web::get().to(index));
+/// The settings to use to configure the service
+#[derive(Debug, Default)]
+pub struct ServiceSettings {
+  pub database_url: String,
 }
 
 /// The actual service to use
@@ -20,21 +15,16 @@ pub struct Service {
 
 impl Service {
   /// Construct a new service
-  pub async fn new() -> Self {
+  pub async fn new(settings: ServiceSettings) -> Self {
     log::info!("Building Service");
-    let database: Database =
-      Database::new("postgres://spacegame:spacegame@localhost:45432/spacegame").await;
+    let database: Database = Database::new(settings.database_url).await;
 
     let mut healthchecks: HashMap<String, Arc<dyn crate::infrastructure::health::Component>> =
       HashMap::new();
     healthchecks.insert("database".to_owned(), Arc::new(database.clone()));
 
     let server = Server::new(vec![
-      Arc::new(config),
       crate::infrastructure::health::configure::configure_healthchecks(healthchecks),
-      Arc::new(move |cfg| {
-        cfg.data(database.clone());
-      }),
     ]);
 
     Service { server }

@@ -16,13 +16,8 @@ impl Server {
 
   /// Start the service running
   pub async fn start(&self, port: u16) {
-    log::info!("Starting web server on port {}", port);
-
-    let listen_address = format!("0.0.0.0:{}", port);
-
     let configs = self.configs.clone();
-
-    HttpServer::new(move || {
+    let builder = move || {
       let configs = configs.clone();
       let mut app = App::new()
         .wrap(Logger::default())
@@ -31,11 +26,15 @@ impl Server {
         app = app.configure(config.deref());
       }
       app
-    })
-    .bind(listen_address)
-    .unwrap()
-    .run()
-    .await
-    .unwrap();
+    };
+
+    log::info!("Starting web server on port {}", port);
+    let listen_address = format!("0.0.0.0:{}", port);
+    HttpServer::new(builder)
+      .bind(listen_address)
+      .unwrap()
+      .run()
+      .await
+      .unwrap();
   }
 }
