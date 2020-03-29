@@ -1,7 +1,4 @@
-use super::{
-  database::Database,
-  server::{Server, TestResponse},
-};
+use super::{database::Database, server::Server};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -41,7 +38,7 @@ impl Service {
   pub async fn run_test(
     &self,
     req: actix_http::Request,
-  ) -> Result<TestResponse, actix_http::error::Error> {
-    self.server.run_test(req).await
+  ) -> Result<super::server::test::TestResponse, actix_http::error::Error> {
+    super::server::test::run_test(&self.server, req).await
   }
 }
