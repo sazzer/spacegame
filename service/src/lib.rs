@@ -1,4 +1,5 @@
 #![feature(async_closure)]
+#![feature(trait_alias)]
 
 pub mod infrastructure;
 pub mod testdatabase;

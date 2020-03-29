@@ -1,4 +1,7 @@
-use super::{database::Database, server::Server};
+use super::{
+  database::Database,
+  server::{Server, TestResponse},
+};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -33,5 +36,12 @@ impl Service {
   /// Start the service running
   pub async fn start(&self, port: u16) {
     self.server.start(port).await;
+  }
+
+  pub async fn run_test(
+    &self,
+    req: actix_http::Request,
+  ) -> Result<TestResponse, actix_http::error::Error> {
+    self.server.run_test(req).await
   }
 }
