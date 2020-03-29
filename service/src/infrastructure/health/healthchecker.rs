@@ -68,7 +68,7 @@ mod tests {
     }
   }
 
-  #[tokio::test]
+  #[actix_rt::test]
   async fn test_no_checks() {
     let sut = Healthchecker::new(HashMap::new());
     let result = sut.check_health().await;
@@ -77,7 +77,7 @@ mod tests {
     assert_that!(&result.components.len(), eq(0));
   }
 
-  #[tokio::test]
+  #[actix_rt::test]
   async fn test_passing_check() {
     let mut checks = HashMap::new();
     checks.insert(
@@ -92,7 +92,7 @@ mod tests {
     assert_that!(&result.components.get("passing"), maybe_some(eq(&Ok(()))));
   }
 
-  #[tokio::test]
+  #[actix_rt::test]
   async fn test_failing_check() {
     let mut checks = HashMap::new();
     checks.insert(
@@ -111,7 +111,7 @@ mod tests {
     );
   }
 
-  #[tokio::test]
+  #[actix_rt::test]
   async fn test_mixed_check() {
     let mut checks = HashMap::new();
     checks.insert("passing".to_owned(), Arc::new(Ok(())) as Arc<dyn Component>);
