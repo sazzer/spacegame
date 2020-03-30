@@ -9,6 +9,7 @@ const STATUS_UNHEALTHY: &'static str = "UNHEALTHY";
 #[derive(Serialize)]
 struct HealthcheckComponentResponse {
   status: &'static str,
+  #[serde(skip_serializing_if = "Option::is_none")]
   message: Option<String>,
 }
 

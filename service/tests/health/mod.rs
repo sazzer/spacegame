@@ -1,22 +1,31 @@
+use crate::asserts::*;
+use crate::server::TestServer;
 use actix_web::test::TestRequest;
-use spacegame_lib::{infrastructure::service::Service, testdatabase::TestDatabase};
+use galvanic_assert::assert_that;
+use serde_json::json;
 
 #[actix_rt::test]
 async fn test_healthcheck() {
   env_logger::try_init().ok();
 
-  let database = TestDatabase::new();
-  let service_settings = spacegame_lib::ServiceSettings {
-    database_url: database.url,
-  };
-
-  let service = Service::new(service_settings).await;
+  let service = TestServer::new().await;
 
   let res = service
     .run_test(TestRequest::get().uri("/health").to_request())
     .await
     .unwrap();
 
-  assert_eq!(actix_web::http::StatusCode::OK, res.status);
-  assert_eq!(1, 2);
+  assert_that!(&res, has_status_code(actix_web::http::StatusCode::OK));
+  assert_that!(&res, has_header("content-type", "application/json"));
+  assert_that!(
+    &res,
+    has_json_body(json!({
+      "status": "HEALTHY",
+      "components": {
+        "database": {
+          "status": "HEALTHY"
+        }
+      }
+    }))
+  );
 }

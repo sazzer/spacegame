@@ -4,12 +4,19 @@ use actix_service::Service;
 use actix_web::http::{HeaderMap, StatusCode};
 use actix_web::{middleware::Logger, App};
 use bytes::Bytes;
+use serde_json::Value;
 use std::ops::Deref;
 
 pub struct TestResponse {
   pub status: StatusCode,
   pub headers: HeaderMap,
   pub body: Bytes,
+}
+
+impl TestResponse {
+  pub fn to_json(&self) -> Result<Value, serde_json::error::Error> {
+    serde_json::from_slice(&self.body)
+  }
 }
 
 pub async fn run_test(server: &super::Server, req: Request) -> Result<TestResponse, Error> {
