@@ -1,7 +1,9 @@
 #![feature(async_closure)]
 #![feature(trait_alias)]
 
+pub mod entity;
 pub mod infrastructure;
+pub mod players;
 pub mod testdatabase;
 
 use infrastructure::service::Service;
