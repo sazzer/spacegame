@@ -1,5 +1,5 @@
 use super::{healthchecker::*, *};
-use actix_web::{http::StatusCode, web, HttpResponse, Responder};
+use actix_web::{get, http::StatusCode, web, HttpResponse, Responder};
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -34,6 +34,7 @@ impl From<Status> for HealthcheckComponentResponse {
   }
 }
 
+#[get("/health")]
 pub async fn check_health(healthchecker: web::Data<Healthchecker>) -> impl Responder {
   let health = healthchecker.check_health().await;
 
