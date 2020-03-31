@@ -1,6 +1,7 @@
 #![feature(async_closure)]
 #![feature(trait_alias)]
 
+pub mod authentication;
 pub mod entity;
 pub mod infrastructure;
 pub mod players;

@@ -1,3 +1,4 @@
+use crate::authentication::ProviderName;
 use crate::entity::*;
 use uuid::Uuid;
 
@@ -12,9 +13,6 @@ pub type AvatarUrl = String;
 
 /// Representation of the ID of a Player at a login provider
 pub type ProviderID = String;
-
-/// Representation of the name of a login provider for a player
-pub type ProviderName = String;
 
 /// Representation of a single login at a single login provider
 pub struct Login {
