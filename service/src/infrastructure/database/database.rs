@@ -9,6 +9,7 @@ pub struct Database {
   pool: Pool<PostgresConnectionManager<tokio_postgres::tls::NoTls>>,
 }
 
+/// Errors that can happen when working with the database
 #[derive(Error, Debug)]
 pub enum DatabaseError {
   #[error("Error checking out connection: {0}")]

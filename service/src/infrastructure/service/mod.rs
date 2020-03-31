@@ -1,4 +1,7 @@
-use super::{database::Database, server::Server};
+use super::{
+  database::{migrate::migrate_database, Database},
+  server::Server,
+};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -18,6 +21,7 @@ impl Service {
   pub async fn new(settings: ServiceSettings) -> Self {
     log::info!("Building Service");
     let database: Database = Database::new(settings.database_url).await;
+    migrate_database(&database).await.unwrap();
 
     let mut healthchecks: HashMap<String, Arc<dyn crate::infrastructure::health::Component>> =
       HashMap::new();
