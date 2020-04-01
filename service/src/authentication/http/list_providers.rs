@@ -15,7 +15,9 @@ pub async fn list_providers(provider_registry: web::Data<ProviderRegistry>) -> i
   let providers: Vec<ProviderModel> = provider_registry
     .list_providers()
     .into_iter()
-    .map(|p| ProviderModel { provider_name: p })
+    .map(|p| ProviderModel {
+      provider_name: p.clone(),
+    })
     .collect();
 
   HttpResponse::Ok().json(providers)
