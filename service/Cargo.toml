@@ -38,3 +38,4 @@ chrono = "0.4.11"
 [dev-dependencies]
 galvanic-assert = "0.8.7"
 assert-json-diff = "1.0.3"
+rstest = "0.6.0"

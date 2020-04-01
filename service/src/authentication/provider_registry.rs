@@ -11,10 +11,6 @@ impl ProviderRegistry {
 
   /// Get the list of providers from the registry
   pub fn list_providers(&self) -> Vec<ProviderName> {
-    vec![
-      "google".to_owned(),
-      "twitter".to_owned(),
-      "facebook".to_owned(),
-    ]
+    vec!["google".parse().unwrap(), "facebook".parse().unwrap()]
   }
 }
