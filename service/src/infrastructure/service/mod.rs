@@ -29,6 +29,7 @@ impl Service {
 
     let server = Server::new(vec![
       crate::infrastructure::health::configure::configure_healthchecks(healthchecks),
+      crate::authentication::configure::configure_authentication(),
     ]);
 
     Service { server }
