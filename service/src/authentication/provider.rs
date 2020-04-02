@@ -30,7 +30,7 @@ impl StartAuthentication {
 }
 
 /// Trait that all login providers implement
-pub trait Provider {
+pub trait Provider: Send + Sync {
   /// Start the authentication process, generating details to redirect the user to in order for them to log in
   fn start(&self) -> StartAuthentication;
 }
