@@ -15,6 +15,8 @@ impl<'d> TestServer<'d> {
     let database = TestDatabase::new();
     let service_settings = spacegame_lib::ServiceSettings {
       database_url: database.url.clone(),
+
+      google_settings: None,
     };
     let service = Service::new(service_settings).await;
 

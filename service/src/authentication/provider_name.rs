@@ -2,7 +2,7 @@ use serde::Serialize;
 use std::str::FromStr;
 
 /// Representation of the name of a login provider for a player
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Serialize)]
 pub struct ProviderName(String);
 
 #[derive(Debug, PartialEq, thiserror::Error)]

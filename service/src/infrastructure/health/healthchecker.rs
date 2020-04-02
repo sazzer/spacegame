@@ -17,6 +17,7 @@ pub struct SystemHealth {
 }
 
 // Mechanism to check the health of the system
+#[derive(Clone)]
 pub struct Healthchecker {
   checks: HashMap<String, Arc<dyn Component>>,
 }

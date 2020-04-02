@@ -7,6 +7,10 @@ use serde::Deserialize;
 struct Settings {
     pub port: Option<u16>,
     pub database_url: String,
+
+    pub google_auth_url: Option<String>,
+    pub google_client_id: Option<String>,
+    pub google_redirect_url: Option<String>,
 }
 
 impl Settings {
@@ -30,6 +34,17 @@ async fn main() {
 
     let service_settings = spacegame_lib::ServiceSettings {
         database_url: settings.database_url,
+
+        google_settings: match (settings.google_client_id, settings.google_redirect_url) {
+            (Some(client_id), Some(redirect_url)) => {
+                Some(spacegame_lib::authentication::google::GoogleSettings {
+                    auth_url: settings.google_auth_url,
+                    client_id: client_id,
+                    redirect_url: redirect_url,
+                })
+            }
+            _ => None,
+        },
     };
     spacegame_lib::main(settings.port.unwrap_or(8000), service_settings).await
 }

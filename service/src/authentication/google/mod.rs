@@ -2,6 +2,18 @@ use crate::authentication::*;
 use uritemplate::UriTemplate;
 use uuid::Uuid;
 
+/// The default URL to use to start authentication
+const DEFAULT_AUTH_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth{?client_id,response_type,scope,redirect_uri,state}";
+
+/// Settings needed to configure the Google Provider
+#[derive(Debug, Clone)]
+pub struct GoogleSettings {
+    pub auth_url: Option<String>,
+
+    pub client_id: String,
+    pub redirect_url: String,
+}
+
 /// Authentication Provider for authenticating with Google
 pub struct GoogleProvider {
     auth_url: String,
@@ -9,10 +21,23 @@ pub struct GoogleProvider {
     redirect_url: String,
 }
 
-impl Default for GoogleProvider {
+impl GoogleProvider {
+    /// Create a new instance of the Google Provider
+    pub fn new(settings: GoogleSettings) -> Self {
+        Self {
+            auth_url: settings.auth_url.unwrap_or(DEFAULT_AUTH_URL.to_owned()),
+
+            client_id: settings.client_id,
+            redirect_url: settings.redirect_url,
+        }
+    }
+}
+
+impl Default for GoogleSettings {
     fn default() -> Self {
         Self {
-            auth_url: "https://accounts.google.com/o/oauth2/v2/auth{?client_id,response_type,scope,redirect_uri,state}".to_owned(),
+            auth_url: None,
+
             client_id: "".to_owned(),
             redirect_url: "".to_owned(),
         }
@@ -47,11 +72,11 @@ mod tests {
 
     #[test]
     fn test_start_authentication() {
-        let sut = GoogleProvider {
+        let sut = GoogleProvider::new(GoogleSettings {
             client_id: "googleClientId".to_owned(),
             redirect_url: "http://localhost:8000/authentication/google/callback".to_owned(),
             ..Default::default()
-        };
+        });
 
         let result = sut.start();
 
