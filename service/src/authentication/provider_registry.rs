@@ -27,3 +27,59 @@ impl ProviderRegistry {
       .map(|provider| provider.clone())
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use galvanic_assert::{
+    assert_that,
+    matchers::{collection::*, *},
+  };
+
+  #[test]
+  fn test_list_no_providers() {
+    let sut = ProviderRegistry::new(HashMap::new());
+
+    let list = sut.list_providers();
+
+    assert_that!(&list, contains_in_any_order(vec![]));
+  }
+
+  #[test]
+  fn test_list_some_providers() {
+    let mock_name: ProviderName = "testing".parse().unwrap();
+    let mock = MockProvider::new();
+    let mut providers = HashMap::new();
+    providers.insert(mock_name.clone(), Arc::new(mock) as Arc<dyn Provider>);
+
+    let sut = ProviderRegistry::new(providers);
+
+    let list = sut.list_providers();
+
+    assert_that!(&list, contains_in_any_order(vec![&mock_name]));
+  }
+
+  #[test]
+  fn test_find_no_provider() {
+    let provider_name: ProviderName = "testing".parse().unwrap();
+    let sut = ProviderRegistry::new(HashMap::new());
+
+    let result = sut.find_provider(&provider_name);
+
+    assert_eq!(result.is_none(), true);
+  }
+
+  #[test]
+  fn test_find_provider() {
+    let mock_name: ProviderName = "testing".parse().unwrap();
+    let mock = MockProvider::new();
+    let provider: Arc<dyn Provider> = Arc::new(mock);
+    let mut providers = HashMap::new();
+    providers.insert(mock_name.clone(), provider);
+
+    let sut = ProviderRegistry::new(providers);
+
+    let result = sut.find_provider(&mock_name);
+    assert_eq!(result.is_some(), true);
+  }
+}

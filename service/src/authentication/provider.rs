@@ -1,3 +1,6 @@
+#[cfg(test)]
+use mockall::automock;
+
 /// Details needed to start authentication with an external provider
 #[derive(Debug, PartialEq)]
 pub struct StartAuthentication {
@@ -30,6 +33,7 @@ impl StartAuthentication {
 }
 
 /// Trait that all login providers implement
+#[cfg_attr(test, automock)]
 pub trait Provider: Send + Sync {
   /// Start the authentication process, generating details to redirect the user to in order for them to log in
   fn start(&self) -> StartAuthentication;
