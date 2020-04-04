@@ -9,7 +9,9 @@ struct Settings {
     pub database_url: String,
 
     pub google_auth_url: Option<String>,
+    pub google_token_url: Option<String>,
     pub google_client_id: Option<String>,
+    pub google_client_secret: Option<String>,
     pub google_redirect_url: Option<String>,
 }
 
@@ -35,11 +37,17 @@ async fn main() {
     let service_settings = spacegame_lib::ServiceSettings {
         database_url: settings.database_url,
 
-        google_settings: match (settings.google_client_id, settings.google_redirect_url) {
-            (Some(client_id), Some(redirect_url)) => {
+        google_settings: match (
+            settings.google_client_id,
+            settings.google_client_secret,
+            settings.google_redirect_url,
+        ) {
+            (Some(client_id), Some(client_secret), Some(redirect_url)) => {
                 Some(spacegame_lib::authentication::google::GoogleSettings {
                     auth_url: settings.google_auth_url,
+                    token_url: settings.google_token_url,
                     client_id: client_id,
+                    client_secret: client_secret,
                     redirect_url: redirect_url,
                 })
             }

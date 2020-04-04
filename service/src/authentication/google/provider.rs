@@ -8,22 +8,18 @@ use uuid::Uuid;
 const DEFAULT_AUTH_URL: &str =
   "https://accounts.google.com/o/oauth2/v2/auth{?client_id,response_type,scope,redirect_uri,state}";
 
+/// The default URL to use to get the Google token details
+const DEFAULT_TOKEN_URL: &str = "https://www.googleapis.com/oauth2/v4/token";
+
 /// Authentication Provider for authenticating with Google
 pub struct GoogleProvider {
-  auth_url: String,
-  client_id: String,
-  redirect_url: String,
+  settings: GoogleSettings,
 }
 
 impl GoogleProvider {
   /// Create a new instance of the Google Provider
   pub fn new(settings: GoogleSettings) -> Self {
-    Self {
-      auth_url: settings.auth_url.unwrap_or(DEFAULT_AUTH_URL.to_owned()),
-
-      client_id: settings.client_id,
-      redirect_url: settings.redirect_url,
-    }
+    Self { settings: settings }
   }
 }
 
@@ -32,13 +28,19 @@ impl Provider for GoogleProvider {
   fn start(&self) -> StartAuthentication {
     let state = Uuid::new_v4().to_string();
 
-    let result_url = UriTemplate::new(&self.auth_url)
-      .set("client_id", self.client_id.clone())
-      .set("response_type", "code")
-      .set("scope", "openid email profile")
-      .set("redirect_uri", self.redirect_url.clone())
-      .set("state", state.clone())
-      .build();
+    let result_url = UriTemplate::new(
+      self
+        .settings
+        .auth_url
+        .as_ref()
+        .unwrap_or(&DEFAULT_AUTH_URL.to_owned()),
+    )
+    .set("client_id", self.settings.client_id.clone())
+    .set("response_type", "code")
+    .set("scope", "openid email profile")
+    .set("redirect_uri", self.settings.redirect_url.clone())
+    .set("state", state.clone())
+    .build();
 
     StartAuthentication::new(result_url).with_nonce(state)
   }
