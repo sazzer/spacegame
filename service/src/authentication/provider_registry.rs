@@ -31,7 +31,21 @@ impl ProviderRegistry {
 #[cfg(test)]
 mod tests {
   use super::*;
+  use async_trait::async_trait;
   use galvanic_assert::{assert_that, matchers::collection::*};
+
+  struct MockProvider {}
+
+  #[async_trait]
+  impl Provider for MockProvider {
+    fn start(&self) -> StartAuthentication {
+      todo!()
+    }
+
+    async fn complete(&self, _: HashMap<String, String>) {
+      todo!()
+    }
+  }
 
   #[test]
   fn test_list_no_providers() {
@@ -45,7 +59,7 @@ mod tests {
   #[test]
   fn test_list_some_providers() {
     let mock_name: ProviderName = "testing".parse().unwrap();
-    let mock = MockProvider::new();
+    let mock = MockProvider {};
     let mut providers = HashMap::new();
     providers.insert(mock_name.clone(), Arc::new(mock) as Arc<dyn Provider>);
 
@@ -69,7 +83,7 @@ mod tests {
   #[test]
   fn test_find_provider() {
     let mock_name: ProviderName = "testing".parse().unwrap();
-    let mock = MockProvider::new();
+    let mock = MockProvider {};
     let provider: Arc<dyn Provider> = Arc::new(mock);
     let mut providers = HashMap::new();
     providers.insert(mock_name.clone(), provider);

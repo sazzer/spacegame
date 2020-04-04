@@ -1,5 +1,4 @@
-#[cfg(test)]
-use mockall::automock;
+use async_trait::async_trait;
 use std::collections::HashMap;
 
 /// Details needed to start authentication with an external provider
@@ -34,11 +33,11 @@ impl StartAuthentication {
 }
 
 /// Trait that all login providers implement
-#[cfg_attr(test, automock)]
+#[async_trait]
 pub trait Provider: Send + Sync {
   /// Start the authentication process, generating details to redirect the user to in order for them to log in
   fn start(&self) -> StartAuthentication;
 
   /// Complete the authentication process, returning the Player that has just authenticated
-  fn complete(&self, params: HashMap<String, String>);
+  async fn complete(&self, params: HashMap<String, String>);
 }

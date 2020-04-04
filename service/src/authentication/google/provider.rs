@@ -1,5 +1,6 @@
 use super::GoogleSettings;
 use crate::authentication::*;
+use async_trait::async_trait;
 use std::collections::HashMap;
 use uritemplate::UriTemplate;
 use uuid::Uuid;
@@ -23,6 +24,7 @@ impl GoogleProvider {
   }
 }
 
+#[async_trait]
 impl Provider for GoogleProvider {
   /// Start the authentication process, generating details to redirect the user to in order for them to log in
   fn start(&self) -> StartAuthentication {
@@ -46,7 +48,7 @@ impl Provider for GoogleProvider {
   }
 
   /// Complete the authentication process, returning the Player that has just authenticated
-  fn complete(&self, params: HashMap<String, String>) {}
+  async fn complete(&self, params: HashMap<String, String>) {}
 }
 
 #[cfg(test)]
