@@ -1,5 +1,6 @@
 #[cfg(test)]
 use mockall::automock;
+use std::collections::HashMap;
 
 /// Details needed to start authentication with an external provider
 #[derive(Debug, PartialEq)]
@@ -37,4 +38,7 @@ impl StartAuthentication {
 pub trait Provider: Send + Sync {
   /// Start the authentication process, generating details to redirect the user to in order for them to log in
   fn start(&self) -> StartAuthentication;
+
+  /// Complete the authentication process, returning the Player that has just authenticated
+  fn complete(&self, params: HashMap<String, String>);
 }

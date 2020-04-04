@@ -13,7 +13,7 @@ pub async fn complete_authentication(
   let provider_name = ProviderName::from_str(path.0.as_ref())
     .map_err(|_e| HttpResponse::BadRequest().body("Invalid Provider Name"))?;
 
-  let _provider = provider_registry
+  let provider = provider_registry
     .find_provider(&provider_name)
     .ok_or(HttpResponse::NotFound().body("Unknown Provider"))?;
 
@@ -26,7 +26,8 @@ pub async fn complete_authentication(
         .collect()
     })
     .unwrap_or_else(HashMap::new);
-  log::info!("Query String: {:?}", params);
+
+  provider.complete(params);
 
   Ok(HttpResponse::Ok().finish())
 }

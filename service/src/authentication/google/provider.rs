@@ -1,5 +1,6 @@
 use super::GoogleSettings;
 use crate::authentication::*;
+use std::collections::HashMap;
 use uritemplate::UriTemplate;
 use uuid::Uuid;
 
@@ -41,6 +42,9 @@ impl Provider for GoogleProvider {
 
     StartAuthentication::new(result_url).with_nonce(state)
   }
+
+  /// Complete the authentication process, returning the Player that has just authenticated
+  fn complete(&self, params: HashMap<String, String>) {}
 }
 
 #[cfg(test)]
