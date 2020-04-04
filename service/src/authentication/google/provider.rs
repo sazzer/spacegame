@@ -48,7 +48,17 @@ impl Provider for GoogleProvider {
   }
 
   /// Complete the authentication process, returning the Player that has just authenticated
-  async fn complete(&self, params: HashMap<String, String>) {}
+  async fn complete(&self, params: HashMap<String, String>) -> String {
+    let resp = reqwest::get("https://httpbin.org/ip")
+      .await
+      .unwrap()
+      .json::<HashMap<String, String>>()
+      .await
+      .unwrap();
+    log::info!("{:#?}", resp);
+
+    "".to_owned()
+  }
 }
 
 #[cfg(test)]

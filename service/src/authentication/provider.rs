@@ -39,5 +39,5 @@ pub trait Provider: Send + Sync {
   fn start(&self) -> StartAuthentication;
 
   /// Complete the authentication process, returning the Player that has just authenticated
-  async fn complete(&self, params: HashMap<String, String>);
+  async fn complete(&self, params: HashMap<String, String>) -> String;
 }
