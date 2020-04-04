@@ -49,10 +49,21 @@ impl Provider for GoogleProvider {
 
   /// Complete the authentication process, returning the Player that has just authenticated
   async fn complete(&self, params: HashMap<String, String>) -> String {
-    let resp = reqwest::get("https://httpbin.org/ip")
+    let client = reqwest::Client::new();
+    let params = [
+      ("grant_type", "authorization_code"),
+      ("client_id", self.settings.client_id.as_ref()),
+      ("client_secret", self.settings.client_secret.as_ref()),
+      ("redirect_uri", self.settings.redirect_url.as_ref()),
+      ("code", params.get("code").unwrap().as_ref()),
+    ];
+    let resp: serde_json::Value = client
+      .post(DEFAULT_TOKEN_URL)
+      .form(&params)
+      .send()
       .await
       .unwrap()
-      .json::<HashMap<String, String>>()
+      .json()
       .await
       .unwrap();
     log::info!("{:#?}", resp);
