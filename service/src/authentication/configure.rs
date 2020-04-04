@@ -14,5 +14,6 @@ pub fn configure_authentication(
     cfg.data(providers);
     cfg.service(super::http::list_providers);
     cfg.service(super::http::start_authentication);
+    cfg.service(super::http::complete_authentication);
   })
 }

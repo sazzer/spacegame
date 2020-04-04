@@ -17,6 +17,7 @@ impl FromStr for ProviderName {
   fn from_str(s: &str) -> Result<Self, Self::Err> {
     let name = s.trim();
     if name.is_empty() {
+      log::info!("Received blank provider name");
       Err(ProviderNameParseError::Blank)
     } else {
       Ok(ProviderName(name.to_owned()))

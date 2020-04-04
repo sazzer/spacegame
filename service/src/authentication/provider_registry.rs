@@ -31,10 +31,7 @@ impl ProviderRegistry {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use galvanic_assert::{
-    assert_that,
-    matchers::{collection::*, *},
-  };
+  use galvanic_assert::{assert_that, matchers::collection::*};
 
   #[test]
   fn test_list_no_providers() {

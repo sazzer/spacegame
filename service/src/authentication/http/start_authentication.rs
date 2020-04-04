@@ -1,32 +1,32 @@
 use crate::authentication::*;
-use actix_web::{get, http::Cookie, web, HttpResponse, Responder};
+use actix_web::{get, http::Cookie, web, HttpResponse};
 use std::str::FromStr;
-use std::sync::Arc;
 
 /// HTTP Handler to start authentication against a specific provider
 #[get("/authentication/{provider}")]
 pub async fn start_authentication(
   path: web::Path<(String,)>,
   provider_registry: web::Data<ProviderRegistry>,
-) -> impl Responder {
-  let provider: Option<Arc<dyn Provider>> = ProviderName::from_str(path.0.as_ref())
-    .ok()
-    .and_then(|provider_name| provider_registry.find_provider(&provider_name));
+) -> Result<HttpResponse, HttpResponse> {
+  let provider_name = ProviderName::from_str(path.0.as_ref())
+    .map_err(|_e| HttpResponse::BadRequest().body("Invalid Provider Name"))?;
 
-  match provider {
-    Some(provider) => {
-      let start_details = provider.start();
-      let mut response = HttpResponse::Found();
-      response.header("Location", start_details.url);
-      if let Some(nonce) = start_details.nonce {
-        response.cookie(
-          Cookie::build("authentication_nonce", nonce)
-            .http_only(true)
-            .finish(),
-        );
-      }
-      response.finish()
-    }
-    None => HttpResponse::NotFound().finish(),
-  }
+  let provider = provider_registry
+    .find_provider(&provider_name)
+    .ok_or(HttpResponse::NotFound().body("Unknown Provider"))?;
+
+  let start_details = provider.start();
+
+  let response = HttpResponse::Found()
+    .header("Location", start_details.url)
+    .if_some(start_details.nonce, |nonce, response| {
+      response.cookie(
+        Cookie::build("authentication_nonce", nonce)
+          .http_only(true)
+          .finish(),
+      );
+    })
+    .finish();
+
+  Ok(response)
 }
