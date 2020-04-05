@@ -1,5 +1,6 @@
 use super::GoogleSettings;
 use crate::authentication::*;
+use crate::players::{service::PlayerService, *};
 use async_trait::async_trait;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -16,12 +17,16 @@ const DEFAULT_TOKEN_URL: &str = "https://www.googleapis.com/oauth2/v4/token";
 /// Authentication Provider for authenticating with Google
 pub struct GoogleProvider {
   settings: GoogleSettings,
+  player_service: PlayerService,
 }
 
 impl GoogleProvider {
   /// Create a new instance of the Google Provider
-  pub fn new(settings: GoogleSettings) -> Self {
-    Self { settings: settings }
+  pub fn new(settings: GoogleSettings, player_service: PlayerService) -> Self {
+    Self {
+      settings: settings,
+      player_service: player_service,
+    }
   }
 }
 

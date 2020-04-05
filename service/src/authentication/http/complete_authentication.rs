@@ -27,7 +27,7 @@ pub async fn complete_authentication(
     })
     .unwrap_or_else(HashMap::new);
 
-  provider.complete(params).await;
+  let _ = provider.complete(params).await;
 
   Ok(HttpResponse::Ok().finish())
 }

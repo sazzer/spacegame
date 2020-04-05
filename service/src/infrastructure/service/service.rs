@@ -13,12 +13,14 @@ impl Service {
 
     let database = super::database::create_database(&settings).await;
     let healthchecks = super::healthchecks::create_healthchecks(&database);
-    let authentication = super::authentication::create_authentication(&settings);
+    let player_service = super::players::create_players(&database);
+    let authentication = super::authentication::create_authentication(&settings, &player_service);
 
     // Actually build the Web Server from all of this
     let server = Server::new(vec![
       crate::infrastructure::health::configure::configure_healthchecks(healthchecks),
       crate::authentication::configure::configure_authentication(authentication),
+      crate::players::configure::configure_players(player_service),
     ]);
 
     Service { server }
