@@ -8,6 +8,13 @@ pub struct StartAuthentication {
   pub nonce: Option<String>,
 }
 
+/// Errors that can occur when performing authentication
+#[derive(Debug, PartialEq, thiserror::Error)]
+pub enum AuthenticationError {
+  #[error("An unknown error occurred")]
+  UnknownError,
+}
+
 impl StartAuthentication {
   /// Create a new instance of the StartAuthentication struct with only a URL
   pub fn new<S>(url: S) -> Self
@@ -39,5 +46,5 @@ pub trait Provider: Send + Sync {
   fn start(&self) -> StartAuthentication;
 
   /// Complete the authentication process, returning the Player that has just authenticated
-  async fn complete(&self, params: HashMap<String, String>) -> String;
+  async fn complete(&self, params: HashMap<String, String>) -> Result<String, AuthenticationError>;
 }

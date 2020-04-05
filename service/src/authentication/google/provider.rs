@@ -1,6 +1,7 @@
 use super::GoogleSettings;
 use crate::authentication::*;
 use async_trait::async_trait;
+use serde::Deserialize;
 use std::collections::HashMap;
 use uritemplate::UriTemplate;
 use uuid::Uuid;
@@ -48,7 +49,7 @@ impl Provider for GoogleProvider {
   }
 
   /// Complete the authentication process, returning the Player that has just authenticated
-  async fn complete(&self, params: HashMap<String, String>) -> String {
+  async fn complete(&self, params: HashMap<String, String>) -> Result<String, AuthenticationError> {
     let client = reqwest::Client::new();
     let params = [
       ("grant_type", "authorization_code"),
@@ -57,19 +58,42 @@ impl Provider for GoogleProvider {
       ("redirect_uri", self.settings.redirect_url.as_ref()),
       ("code", params.get("code").unwrap().as_ref()),
     ];
-    let resp: serde_json::Value = client
+    let response = client
       .post(DEFAULT_TOKEN_URL)
       .form(&params)
       .send()
       .await
-      .unwrap()
-      .json()
-      .await
-      .unwrap();
-    log::info!("{:#?}", resp);
+      .map_err(|e| {
+        log::warn!("Failed to communicate with Google: {}", e);
+        AuthenticationError::UnknownError
+      })?;
+    log::debug!("Response from Google: {:#?}", response);
 
-    "".to_owned()
+    if response.status() != reqwest::StatusCode::OK {
+      log::warn!(
+        "An error occurred authenticating with Google: {:?}",
+        response.text().await
+      );
+      return Err(AuthenticationError::UnknownError);
+    }
+
+    let token_response: TokenResponse = response.json().await.map_err(|e| {
+      log::warn!("Failed to deserialize token from Google: {}", e);
+      AuthenticationError::UnknownError
+    })?;
+
+    log::info!("Token from Google: {:?}", token_response);
+    Ok("".to_owned())
   }
+}
+
+#[derive(Debug, Deserialize)]
+struct TokenResponse {
+  access_token: String,
+  expires_in: u32,
+  scope: String,
+  token_type: String,
+  id_token: String,
 }
 
 #[cfg(test)]

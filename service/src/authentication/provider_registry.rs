@@ -42,7 +42,7 @@ mod tests {
       todo!()
     }
 
-    async fn complete(&self, _: HashMap<String, String>) -> String {
+    async fn complete(&self, _: HashMap<String, String>) -> Result<String, AuthenticationError> {
       todo!()
     }
   }
