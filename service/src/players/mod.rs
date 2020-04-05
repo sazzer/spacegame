@@ -1,3 +1,3 @@
-mod player;
+mod model;
 
-pub use player::*;
+pub use model::*;
