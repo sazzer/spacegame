@@ -13,7 +13,11 @@ type Service struct {
 func NewService(settings Settings) Service {
 	logrus.Info("Building Service")
 
-	database.NewPostgresDatabase(settings.DatabaseURL)
+	db := database.NewPostgresDatabase(settings.DatabaseURL)
+	err := database.Migrate(db)
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to migrate database")
+	}
 
 	return Service{}
 }
