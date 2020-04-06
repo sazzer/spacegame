@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/sazzer/spacegame/service/internal/infrastructure/database"
+	"github.com/sazzer/spacegame/service/internal/players"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,6 +20,7 @@ func NewService(settings Settings) Service {
 		logrus.WithError(err).Fatal("Failed to migrate database")
 	}
 
+	players.BuildPlayersService(db)
 	return Service{}
 }
 
