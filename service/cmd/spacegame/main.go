@@ -12,8 +12,10 @@ func main() {
 		FullTimestamp: true,
 	})
 
+	config := loadConfig()
+
 	settings := service.Settings{
-		DatabaseURL: "postgres://spacegame:spacegame@localhost:45432/spacegame?sslmode=disable",
+		DatabaseURL: config.DatabaseURL,
 	}
 	service := service.NewService(settings)
 	service.Start()
