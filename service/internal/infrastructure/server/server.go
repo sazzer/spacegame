@@ -14,13 +14,17 @@ type Server struct {
 }
 
 // NewServer constructs a new HTTP Server
-func NewServer() Server {
+func NewServer(handlers ...func(*echo.Echo)) Server {
 	e := echo.New()
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{}))
+
+	for _, handler := range handlers {
+		handler(e)
+	}
 
 	return Server{server: e}
 }

@@ -32,7 +32,9 @@ func NewService(settings Settings) Service {
 	startupHealth := healthchecker.CheckHealth()
 	logrus.WithField("health", startupHealth).Info("System Health on startup")
 
-	server := server.NewServer()
+	server := server.NewServer(
+		health.BuildRoutes(healthchecker),
+	)
 
 	return Service{server: server}
 }
