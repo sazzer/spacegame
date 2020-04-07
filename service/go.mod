@@ -13,6 +13,8 @@ require (
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/lib/pq v1.3.0
 	github.com/sirupsen/logrus v1.5.0
+	github.com/stretchr/testify v1.4.0
+	github.com/testcontainers/testcontainers-go v0.3.1
 	github.com/valyala/fasttemplate v1.1.0 // indirect
 	golang.org/x/sys v0.0.0-20200406113430-c6e801f48ba2 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
