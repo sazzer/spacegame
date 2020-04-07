@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/sazzer/spacegame/service/internal/infrastructure/database"
+	"github.com/sazzer/spacegame/service/internal/infrastructure/health"
 	"github.com/sazzer/spacegame/service/internal/infrastructure/server"
 	"github.com/sazzer/spacegame/service/internal/players"
 	"github.com/sirupsen/logrus"
@@ -23,6 +24,13 @@ func NewService(settings Settings) Service {
 	}
 
 	players.BuildPlayersService(db)
+
+	healthchecker := health.NewHealthChecker(map[string]health.Component{
+		"database": db,
+	})
+
+	startupHealth := healthchecker.CheckHealth()
+	logrus.WithField("health", startupHealth).Info("System Health on startup")
 
 	server := server.NewServer()
 
