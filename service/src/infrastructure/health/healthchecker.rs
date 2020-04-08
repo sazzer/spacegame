@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 /// The Healthchecker is the ability to check the health of the system
+#[derive(Clone)]
 pub struct Healthchecker {
   _components: HashMap<String, Arc<dyn Component>>,
 }

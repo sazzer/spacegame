@@ -5,5 +5,5 @@ pub async fn main() {
   log::info!("Starting...");
 
   let service = crate::infrastructure::service::Service::new().await;
-  service.start().await;
+  service.start(8000).await;
 }
