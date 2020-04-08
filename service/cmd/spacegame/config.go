@@ -7,6 +7,7 @@ import (
 
 // Config reprsents the configuration of the application
 type Config struct {
+	Port        uint16 `envconfig:"PORT" default:"8000"`
 	DatabaseURL string `envconfig:"DATABASE_URL" required:"true"`
 }
 

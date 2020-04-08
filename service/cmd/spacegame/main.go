@@ -18,5 +18,5 @@ func main() {
 		DatabaseURL: config.DatabaseURL,
 	}
 	service := service.NewService(settings)
-	service.Start()
+	service.Start(config.Port)
 }

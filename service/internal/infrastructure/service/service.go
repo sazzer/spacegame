@@ -40,7 +40,7 @@ func NewService(settings Settings) Service {
 }
 
 // Start the service running
-func (s *Service) Start() {
+func (s *Service) Start(port uint16) {
 	logrus.Info("Starting Service")
-	s.server.Start(8000)
+	s.server.Start(port)
 }
