@@ -1,8 +1,9 @@
 use dotenv::dotenv;
 
-fn main() {
+#[actix_rt::main]
+async fn main() {
     dotenv().ok();
     env_logger::init();
 
-    spacegame_lib::main();
+    spacegame_lib::main().await;
 }

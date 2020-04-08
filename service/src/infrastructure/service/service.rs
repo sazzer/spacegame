@@ -7,10 +7,10 @@ pub struct Service {
 
 impl Service {
   /// Create a new Service
-  pub fn new() -> Self {
+  pub async fn new() -> Self {
     log::info!("Creating Service");
 
-    let db = crate::infrastructure::database::Database::new();
+    let db = crate::infrastructure::database::Database::new().await;
 
     let _player_service = crate::players::configure::new_player_service(db.clone());
 
@@ -24,8 +24,8 @@ impl Service {
   }
 
   /// Start the service running
-  pub fn start(&self) {
+  pub async fn start(&self) {
     log::info!("Starting Service");
-    self.server.start();
+    self.server.start().await;
   }
 }

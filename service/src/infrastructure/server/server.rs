@@ -10,7 +10,7 @@ impl Server {
   }
 
   /// Start the service running
-  pub fn start(&self) {
+  pub async fn start(&self) {
     log::info!("Starting HTTP Server");
   }
 }
