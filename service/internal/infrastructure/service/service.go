@@ -23,7 +23,7 @@ func NewService(settings Settings) Service {
 		logrus.WithError(err).Fatal("Failed to migrate database")
 	}
 
-	players.BuildPlayersService(db)
+	playerService := players.BuildPlayersService(db)
 
 	healthchecker := health.NewHealthChecker(map[string]health.Component{
 		"database": db,
@@ -34,6 +34,7 @@ func NewService(settings Settings) Service {
 
 	server := server.NewServer(
 		health.BuildRoutes(healthchecker),
+		players.BuildRoutes(playerService),
 	)
 
 	return Service{server: server}
