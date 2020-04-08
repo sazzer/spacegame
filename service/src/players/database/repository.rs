@@ -12,3 +12,14 @@ impl PlayerRepository {
     Self { db }
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_something() {
+    let db = crate::infrastructure::database::Database::faux();
+    let _sut = PlayerRepository::new(db);
+  }
+}
