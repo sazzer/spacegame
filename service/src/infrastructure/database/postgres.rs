@@ -46,3 +46,15 @@ impl Clone for Database {
     }
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use crate::testing::database::TestDatabase;
+
+  #[actix_rt::test]
+  async fn test_connect_to_database() {
+    let test_database = TestDatabase::new();
+    Database::new(test_database.url).await;
+  }
+}

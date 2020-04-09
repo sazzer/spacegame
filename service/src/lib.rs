@@ -1,5 +1,7 @@
 pub mod infrastructure;
 pub mod players;
+#[cfg(test)]
+pub mod testing;
 
 /// The settings with which to run the service
 pub struct Settings {
