@@ -16,6 +16,9 @@ impl Service {
     log::info!("Creating Service");
 
     let db = crate::infrastructure::database::Database::new(settings.database_url).await;
+    crate::infrastructure::database::migrate::migrate_database(&db)
+      .await
+      .unwrap();
 
     let _player_service = crate::players::configure::new_player_service(db.clone());
 
