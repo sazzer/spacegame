@@ -25,6 +25,7 @@ config = "0.10.1"
 bb8 = "0.4.0"
 bb8-postgres = "0.4.0"
 tokio-postgres = "0.5.3"
+async-trait = "0.1.30"
 
 [dev-dependencies]
 faux = "0.0.4"

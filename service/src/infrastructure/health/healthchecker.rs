@@ -63,13 +63,15 @@ impl Healthchecker {
   }
 
   /// Check the health of the entire system
-  pub fn check_health(&self) -> SystemHealth {
+  pub async fn check_health(&self) -> SystemHealth {
+    let mut results = HashMap::new();
+
+    for (key, component) in self.components.iter() {
+      results.insert(key.clone(), component.check_health().await.into());
+    }
+
     SystemHealth {
-      components: self
-        .components
-        .iter()
-        .map(|(key, component)| (key.clone(), component.check_health().into()))
-        .collect(),
+      components: results,
     }
   }
 }
@@ -153,18 +155,18 @@ mod tests {
     assert_eq!(false, sut.is_healthy());
   }
 
-  #[test]
-  fn test_healthchecker_no_components_is_healthy() {
+  #[actix_rt::test]
+  async fn test_healthchecker_no_components_is_healthy() {
     let components = HashMap::new();
     let sut = Healthchecker::new(components);
 
-    let result = sut.check_health();
+    let result = sut.check_health().await;
     assert_eq!(true, result.is_healthy());
     assert_eq!(0, result.components.len());
   }
 
-  #[test]
-  fn test_healthchecker_healthy_component_is_healthy() {
+  #[actix_rt::test]
+  async fn test_healthchecker_healthy_component_is_healthy() {
     let mut components = HashMap::new();
     components.insert(
       "passing".to_owned(),
@@ -172,7 +174,7 @@ mod tests {
     );
     let sut = Healthchecker::new(components);
 
-    let result = sut.check_health();
+    let result = sut.check_health().await;
     assert_eq!(true, result.is_healthy());
     assert_eq!(1, result.components.len());
     assert_eq!(
@@ -181,8 +183,8 @@ mod tests {
     );
   }
 
-  #[test]
-  fn test_healthchecker_unhealthy_component_is_unhealthy() {
+  #[actix_rt::test]
+  async fn test_healthchecker_unhealthy_component_is_unhealthy() {
     let mut components = HashMap::new();
     components.insert(
       "failing".to_owned(),
@@ -190,7 +192,7 @@ mod tests {
     );
     let sut = Healthchecker::new(components);
 
-    let result = sut.check_health();
+    let result = sut.check_health().await;
     assert_eq!(false, result.is_healthy());
     assert_eq!(1, result.components.len());
     assert_eq!(
@@ -199,8 +201,8 @@ mod tests {
     );
   }
 
-  #[test]
-  fn test_healthchecker_mixed_components_are_unhealthy() {
+  #[actix_rt::test]
+  async fn test_healthchecker_mixed_components_are_unhealthy() {
     let mut components = HashMap::new();
     components.insert(
       "passing".to_owned(),
@@ -212,7 +214,7 @@ mod tests {
     );
     let sut = Healthchecker::new(components);
 
-    let result = sut.check_health();
+    let result = sut.check_health().await;
     assert_eq!(false, result.is_healthy());
     assert_eq!(2, result.components.len());
     assert_eq!(

@@ -68,7 +68,7 @@ impl From<SystemHealth> for SystemHealthModel {
 
 #[get("/health")]
 pub async fn check_health(healthchecker: web::Data<Healthchecker>) -> impl Responder {
-  let health = healthchecker.check_health();
+  let health = healthchecker.check_health().await;
 
   let status_code = if health.is_healthy() {
     StatusCode::OK
