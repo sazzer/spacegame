@@ -5,12 +5,17 @@ pub struct Service {
   server: crate::infrastructure::server::Server,
 }
 
+/// Settings needed to run the service
+pub struct Settings {
+  pub database_url: String,
+}
+
 impl Service {
   /// Create a new Service
-  pub async fn new() -> Self {
+  pub async fn new(settings: Settings) -> Self {
     log::info!("Creating Service");
 
-    let db = crate::infrastructure::database::Database::new().await;
+    let db = crate::infrastructure::database::Database::new(settings.database_url).await;
 
     let _player_service = crate::players::configure::new_player_service(db.clone());
 
