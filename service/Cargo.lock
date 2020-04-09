@@ -1340,12 +1340,15 @@ name = "spacegame"
 version = "0.1.0"
 dependencies = [
  "actix-cors",
+ "actix-http",
  "actix-rt",
  "actix-web",
  "dotenv",
  "env_logger",
  "faux",
  "log",
+ "serde",
+ "serde_json",
  "thiserror",
 ]
 
