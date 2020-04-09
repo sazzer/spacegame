@@ -1,7 +1,7 @@
 #[cfg(test)]
 use faux;
 
-use bb8::Pool;
+use bb8::{Pool, PooledConnection};
 use bb8_postgres::PostgresConnectionManager;
 use std::str::FromStr;
 
@@ -35,6 +35,27 @@ impl Database {
 
     Database { pool }
   }
+
+  /// Check out a connection with which we can send queries to the database
+  pub async fn checkout(
+    &self,
+  ) -> Result<
+    PooledConnection<'_, PostgresConnectionManager<tokio_postgres::tls::NoTls>>,
+    DatabaseError,
+  > {
+    self
+      .pool
+      .get()
+      .await
+      .map_err(|e| DatabaseError::CheckoutError(format!("{}", e)))
+  }
+}
+
+/// Errors that can happen when working with the database
+#[derive(thiserror::Error, Debug)]
+pub enum DatabaseError {
+  #[error("Error checking out connection: {0}")]
+  CheckoutError(String),
 }
 
 #[cfg(test)]
