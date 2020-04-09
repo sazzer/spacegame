@@ -1,9 +1,15 @@
 pub mod infrastructure;
 pub mod players;
 
-pub async fn main() {
+/// The settings with which to run the service
+pub struct Settings {
+  pub port: u16,
+}
+
+/// Actually run the service
+pub async fn main(settings: Settings) {
   log::info!("Starting...");
 
   let service = crate::infrastructure::service::Service::new().await;
-  service.start(8000).await;
+  service.start(settings.port).await;
 }
