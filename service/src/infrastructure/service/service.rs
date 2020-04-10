@@ -38,4 +38,12 @@ impl Service {
     log::info!("Starting Service");
     self.server.start(port).await;
   }
+
+  /// Actually make a test request against the service
+  pub async fn test_request(
+    &self,
+    req: actix_http::Request,
+  ) -> Result<crate::infrastructure::server::testing::TestResponse, actix_http::error::Error> {
+    crate::infrastructure::server::testing::run_test(&self.server, req).await
+  }
 }

@@ -27,8 +27,12 @@ bb8-postgres = "0.4.0"
 tokio-postgres = "0.5.3"
 async-trait = "0.1.30"
 rust-embed = "5.5.1"
+testcontainers = "0.9.1"
+lazy_static = "1.4.0"
+bytes = "0.5.4"
+actix-service = "1.0.5"
+
 
 [dev-dependencies]
 faux = "0.0.4"
-testcontainers = "0.9.1"
-lazy_static = "1.4.0"
+insta = "0.15.0"

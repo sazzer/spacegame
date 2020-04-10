@@ -8,7 +8,7 @@ pub type FnConfig = Arc<dyn Fn(&mut web::ServiceConfig) + Send + Sync>;
 
 /// The actual HTTP Server
 pub struct Server {
-  configs: Vec<FnConfig>,
+  pub(super) configs: Vec<FnConfig>,
 }
 
 impl Server {
