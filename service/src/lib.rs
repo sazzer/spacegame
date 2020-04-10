@@ -1,3 +1,4 @@
+pub mod authentication;
 pub mod infrastructure;
 pub mod players;
 pub mod testing;

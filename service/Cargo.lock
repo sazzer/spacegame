@@ -904,6 +904,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "galvanic-assert"
+version = "0.8.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3afb916c829538b4f18402c9d0be7484a6f5539442e19ed67ddfb7782604bb40"
+
+[[package]]
 name = "generic-array"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1808,6 +1814,7 @@ dependencies = [
  "dotenv",
  "env_logger",
  "faux",
+ "galvanic-assert",
  "insta",
  "lazy_static",
  "log",

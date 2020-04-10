@@ -32,7 +32,7 @@ lazy_static = "1.4.0"
 bytes = "0.5.4"
 actix-service = "1.0.5"
 
-
 [dev-dependencies]
 faux = "0.0.4"
 insta = "0.15.0"
+galvanic-assert = "0.8.7"
