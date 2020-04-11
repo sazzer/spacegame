@@ -2,7 +2,11 @@ use super::problem::AuthenticationProblem;
 use crate::authentication::{Provider, ProviderName, ProviderNameParseError, ProviderRegistry};
 use crate::http::problem::Problem;
 use actix_http::Response;
-use actix_web::{get, http::StatusCode, web, HttpResponse};
+use actix_web::{
+  get,
+  http::{header, Cookie, StatusCode},
+  web, HttpResponse,
+};
 
 impl From<ProviderNameParseError> for Problem<AuthenticationProblem> {
   fn from(_e: ProviderNameParseError) -> Problem<AuthenticationProblem> {
@@ -29,5 +33,19 @@ pub async fn start_authentication(
   )?;
 
   log::info!("Starting authentication with provider: {:?}", provider_name);
-  Ok(HttpResponse::Ok().finish())
+
+  let start_details = provider.start();
+
+  Ok(
+    HttpResponse::Found()
+      .header(header::LOCATION, start_details.redirect_url)
+      .if_some(start_details.nonce, |nonce, res| {
+        res.cookie(
+          Cookie::build("spacegame_authentication", nonce)
+            .http_only(true)
+            .finish(),
+        );
+      })
+      .finish(),
+  )
 }

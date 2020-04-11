@@ -13,6 +13,9 @@ impl GoogleProvider {
 impl Provider for GoogleProvider {
   /// Start authentication with the provider
   fn start(&self) -> StartAuthentication {
-    todo!()
+    StartAuthentication {
+      redirect_url: "http://www.google.com".to_owned(),
+      nonce: Some("my_nonce".to_owned()),
+    }
   }
 }
