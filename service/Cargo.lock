@@ -1814,6 +1814,7 @@ dependencies = [
  "dotenv",
  "env_logger",
  "faux",
+ "futures",
  "galvanic-assert",
  "insta",
  "lazy_static",

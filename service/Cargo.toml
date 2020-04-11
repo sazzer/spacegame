@@ -31,6 +31,7 @@ testcontainers = "0.9.1"
 lazy_static = "1.4.0"
 bytes = "0.5.4"
 actix-service = "1.0.5"
+futures = "0.3.4"
 
 [dev-dependencies]
 faux = "0.0.4"
