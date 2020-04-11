@@ -20,15 +20,28 @@ impl ProviderRegistry {
   pub fn provider_names(&self) -> impl Iterator<Item = &ProviderName> {
     self.providers.keys()
   }
+
+  /// Attempt to get the provider with the given name
+  pub fn get(&self, provider: &ProviderName) -> Option<&dyn Provider> {
+    self.providers.get(provider).map(|p| &**p)
+  }
 }
 
 #[cfg(test)]
 mod tests {
   use super::*;
-  use galvanic_assert::{assert_that, matchers::collection::*};
+  use crate::authentication::StartAuthentication;
+  use galvanic_assert::{
+    assert_that,
+    matchers::{collection::*, *},
+  };
 
   struct FakeProvider {}
-  impl Provider for FakeProvider {}
+  impl Provider for FakeProvider {
+    fn start(&self) -> StartAuthentication {
+      todo!()
+    }
+  }
 
   #[test]
   fn test_list_names_empty_registry() {
@@ -56,5 +69,36 @@ mod tests {
     let names = sut.provider_names().collect::<Vec<&ProviderName>>();
 
     assert_that!(&names, contains_in_any_order(vec![&google, &twitter]));
+  }
+
+  #[test]
+  fn test_get_unknown_provider() {
+    let google: ProviderName = "google".parse().unwrap();
+    let twitter: ProviderName = "twitter".parse().unwrap();
+
+    let mut providers = HashMap::new();
+    providers.insert(
+      google.clone(),
+      Arc::new(FakeProvider {}) as Arc<dyn Provider>,
+    );
+    let sut = ProviderRegistry::new(providers);
+
+    let result = sut.get(&twitter);
+    assert_that!(&result.is_none(), eq(true));
+  }
+
+  #[test]
+  fn test_get_known_provider() {
+    let google: ProviderName = "google".parse().unwrap();
+
+    let mut providers = HashMap::new();
+    providers.insert(
+      google.clone(),
+      Arc::new(FakeProvider {}) as Arc<dyn Provider>,
+    );
+    let sut = ProviderRegistry::new(providers);
+
+    let result = sut.get(&google);
+    assert_that!(&result.is_some(), eq(true));
   }
 }

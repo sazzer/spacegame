@@ -1,4 +1,4 @@
-use crate::authentication::Provider;
+use crate::authentication::{Provider, StartAuthentication};
 
 /// Authentication Provider for authenticating with Google
 pub struct GoogleProvider {}
@@ -10,4 +10,9 @@ impl GoogleProvider {
   }
 }
 
-impl Provider for GoogleProvider {}
+impl Provider for GoogleProvider {
+  /// Start authentication with the provider
+  fn start(&self) -> StartAuthentication {
+    todo!()
+  }
+}
