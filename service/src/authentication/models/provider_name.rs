@@ -7,19 +7,19 @@ pub struct ProviderName(String);
 
 /// Errors that can occur when parsing a provider name
 #[derive(thiserror::Error, Debug, PartialEq)]
-pub enum ParseError {
+pub enum ProviderNameParseError {
   #[error("The value must not be blank")]
   Blank,
 }
 
 impl FromStr for ProviderName {
-  type Err = ParseError;
+  type Err = ProviderNameParseError;
 
   fn from_str(s: &str) -> Result<Self, Self::Err> {
     let trimmed_name = s.trim();
 
     if trimmed_name.len() == 0 {
-      Err(ParseError::Blank)
+      Err(ProviderNameParseError::Blank)
     } else {
       Ok(Self(trimmed_name.to_owned()))
     }
@@ -37,7 +37,7 @@ mod tests {
   #[test]
   fn test_parse_name() {
     let input = "google";
-    let parsed: Result<ProviderName, ParseError> = input.parse();
+    let parsed: Result<ProviderName, ProviderNameParseError> = input.parse();
 
     assert_that!(&parsed, maybe_ok(eq(ProviderName("google".to_owned()))));
   }
@@ -45,7 +45,7 @@ mod tests {
   #[test]
   fn test_parse_padded_name() {
     let input = "   google   ";
-    let parsed: Result<ProviderName, ParseError> = input.parse();
+    let parsed: Result<ProviderName, ProviderNameParseError> = input.parse();
 
     assert_that!(&parsed, maybe_ok(eq(ProviderName("google".to_owned()))));
   }
@@ -53,16 +53,16 @@ mod tests {
   #[test]
   fn test_parse_empty_name() {
     let input = "";
-    let parsed: Result<ProviderName, ParseError> = input.parse();
+    let parsed: Result<ProviderName, ProviderNameParseError> = input.parse();
 
-    assert_that!(&parsed, maybe_err(eq(ParseError::Blank)));
+    assert_that!(&parsed, maybe_err(eq(ProviderNameParseError::Blank)));
   }
 
   #[test]
   fn test_parse_blank_name() {
     let input = "   ";
-    let parsed: Result<ProviderName, ParseError> = input.parse();
+    let parsed: Result<ProviderName, ProviderNameParseError> = input.parse();
 
-    assert_that!(&parsed, maybe_err(eq(ParseError::Blank)));
+    assert_that!(&parsed, maybe_err(eq(ProviderNameParseError::Blank)));
   }
 }

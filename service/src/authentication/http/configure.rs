@@ -10,5 +10,6 @@ pub fn configure_authentication(
   Arc::new(move |cfg| {
     cfg.data(provider_registry.clone());
     cfg.service(super::list_providers::list_providers);
+    cfg.service(super::start::start_authentication);
   })
 }
