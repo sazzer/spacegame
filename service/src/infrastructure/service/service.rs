@@ -22,12 +22,15 @@ impl Service {
 
     let _player_service = crate::players::configure::new_player_service(db.clone());
 
+    let provider_registry = crate::authentication::configure::configure_provider_registry();
+
     let healthchecker = crate::infrastructure::health::builder::HealthCheckerBuilder::new()
       .with_component("db", Arc::new(db.clone()))
       .build();
 
     let server = crate::infrastructure::server::Server::new(vec![
       crate::infrastructure::health::configure::configure_healthchecks(healthchecker),
+      crate::authentication::configure::configure_authentication(provider_registry),
     ]);
 
     Self { server: server }

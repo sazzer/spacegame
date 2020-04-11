@@ -1,16 +1,16 @@
 use crate::authentication::{service::ProviderRegistry, Provider, ProviderName};
-use std::boxed::Box;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 /// Builder for the Provider Registry
 #[derive(Default)]
 pub struct ProviderRegistryBuilder {
-  providers: HashMap<ProviderName, Box<dyn Provider>>,
+  providers: HashMap<ProviderName, Arc<dyn Provider>>,
 }
 
 impl ProviderRegistryBuilder {
   /// Add a new provider to the registry we are building
-  pub fn with_provider(mut self, name: ProviderName, provider: Box<dyn Provider>) -> Self {
+  pub fn with_provider(mut self, name: ProviderName, provider: Arc<dyn Provider>) -> Self {
     self.providers.insert(name, provider);
     self
   }

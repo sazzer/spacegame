@@ -1,15 +1,16 @@
 use crate::authentication::{Provider, ProviderName};
-use std::boxed::Box;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 /// Registry of all known providers
+#[derive(Clone)]
 pub struct ProviderRegistry {
-  providers: HashMap<ProviderName, Box<dyn Provider>>,
+  providers: HashMap<ProviderName, Arc<dyn Provider>>,
 }
 
 impl ProviderRegistry {
   /// Construct the provider registry
-  pub fn new(providers: HashMap<ProviderName, Box<dyn Provider>>) -> Self {
+  pub fn new(providers: HashMap<ProviderName, Arc<dyn Provider>>) -> Self {
     Self {
       providers: providers,
     }
@@ -45,11 +46,11 @@ mod tests {
     let mut providers = HashMap::new();
     providers.insert(
       google.clone(),
-      Box::new(FakeProvider {}) as Box<dyn Provider>,
+      Arc::new(FakeProvider {}) as Arc<dyn Provider>,
     );
     providers.insert(
       twitter.clone(),
-      Box::new(FakeProvider {}) as Box<dyn Provider>,
+      Arc::new(FakeProvider {}) as Arc<dyn Provider>,
     );
     let sut = ProviderRegistry::new(providers);
     let names = sut.provider_names().collect::<Vec<&ProviderName>>();
