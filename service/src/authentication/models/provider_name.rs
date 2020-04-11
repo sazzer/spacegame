@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 /// The name of an Authentication Provider
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct ProviderName(String);
 
 /// Errors that can occur when parsing a provider name
