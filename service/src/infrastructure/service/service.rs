@@ -8,6 +8,8 @@ pub struct Service {
 /// Settings needed to run the service
 pub struct Settings {
   pub database_url: String,
+
+  pub google_settings: crate::authentication::google::GoogleSettings,
 }
 
 impl Service {
@@ -22,7 +24,8 @@ impl Service {
 
     let _player_service = crate::players::configure::new_player_service(db.clone());
 
-    let provider_registry = crate::authentication::configure::configure_provider_registry();
+    let provider_registry =
+      crate::authentication::configure::configure_provider_registry(settings.google_settings);
 
     let healthchecker = crate::infrastructure::health::builder::HealthCheckerBuilder::new()
       .with_component("db", Arc::new(db.clone()))

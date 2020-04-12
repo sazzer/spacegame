@@ -22,6 +22,7 @@ impl<'a> TestService<'a> {
     let db = TestDatabase::new();
     let service_settings = Settings {
       database_url: db.url.clone(),
+      google_settings: spacegame_lib::authentication::google::GoogleSettings::default(),
     };
     let service = Service::new(service_settings).await;
 

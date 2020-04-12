@@ -1,5 +1,5 @@
 pub mod configure;
-mod google;
+pub mod google;
 mod http;
 mod models;
 mod service;
