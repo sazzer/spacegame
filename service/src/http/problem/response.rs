@@ -76,3 +76,33 @@ where
     self.into()
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[derive(thiserror::Error, Debug, PartialEq)]
+  pub enum ProblemDetails {
+    #[error("Something Happened")]
+    SomeProblem,
+  }
+
+  impl ProblemType for ProblemDetails {
+    fn error_code(&self) -> &'static str {
+      "tag:spacegame,2020:some/problem"
+    }
+  }
+
+  #[test]
+  fn test_basic_problem_to_response() {
+    let problem = Problem::new(ProblemDetails::SomeProblem, StatusCode::BAD_REQUEST);
+
+    let response: HttpResponse = problem.into();
+    assert_eq!(StatusCode::BAD_REQUEST, response.status());
+    assert_eq!(
+      "application/problem+json",
+      response.headers().get(header::CONTENT_TYPE).unwrap()
+    );
+    // TODO: Assert response body
+  }
+}
