@@ -9,6 +9,10 @@ pub fn configure_healthchecks(
   let healthchecker = healthchecker.clone();
   Arc::new(move |cfg| {
     cfg.data(healthchecker.clone());
-    cfg.service(super::http::check_health);
+
+    cfg.route(
+      "/health",
+      web::get().to(super::http::check_health::check_health),
+    );
   })
 }

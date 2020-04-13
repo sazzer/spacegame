@@ -1,12 +1,10 @@
-use super::healthchecker::*;
-use actix_http::http::StatusCode;
-use actix_web::{get, web, HttpResponse, Responder};
+use crate::infrastructure::health::healthchecker::*;
 use serde::Serialize;
 use std::collections::HashMap;
 
 /// The status of a component or of the entire system
 #[derive(Serialize, Debug, PartialEq)]
-enum Status {
+pub enum Status {
   /// The status is Healthy
   Healthy,
 
@@ -16,17 +14,17 @@ enum Status {
 
 /// API Model to represent the health of a component
 #[derive(Serialize, Debug, PartialEq)]
-struct ComponentHealthModel {
-  status: Status,
+pub struct ComponentHealthModel {
+  pub status: Status,
   #[serde(skip_serializing_if = "Option::is_none")]
-  message: Option<String>,
+  pub message: Option<String>,
 }
 
 /// API Model to represent the health of the entire system
 #[derive(Serialize, Debug, PartialEq)]
-struct SystemHealthModel {
-  status: Status,
-  components: HashMap<String, ComponentHealthModel>,
+pub struct SystemHealthModel {
+  pub status: Status,
+  pub components: HashMap<String, ComponentHealthModel>,
 }
 
 impl From<bool> for Status {
@@ -64,21 +62,6 @@ impl From<SystemHealth> for SystemHealthModel {
         .collect(),
     }
   }
-}
-
-#[get("/health")]
-pub async fn check_health(healthchecker: web::Data<Healthchecker>) -> impl Responder {
-  let health = healthchecker.check_health().await;
-
-  let status_code = if health.is_healthy() {
-    StatusCode::OK
-  } else {
-    StatusCode::SERVICE_UNAVAILABLE
-  };
-
-  let response: SystemHealthModel = health.into();
-
-  HttpResponse::build(status_code).json(response)
 }
 
 #[cfg(test)]

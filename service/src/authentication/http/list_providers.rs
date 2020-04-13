@@ -1,5 +1,5 @@
 use crate::authentication::{ProviderName, ProviderRegistry};
-use actix_web::{get, web, HttpResponse, Responder};
+use actix_web::{web, HttpResponse, Responder};
 use serde::Serialize;
 
 /// API Model for the list of Authentication Provider names
@@ -9,7 +9,6 @@ struct ProviderListModel<'a> {
 }
 
 /// List the authentication providers that we can work with
-#[get("/authentication")]
 pub async fn list_providers(provider_registry: web::Data<ProviderRegistry>) -> impl Responder {
   let names = provider_registry.provider_names().collect();
 

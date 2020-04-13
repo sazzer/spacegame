@@ -3,7 +3,6 @@ use crate::authentication::{Provider, ProviderName, ProviderNameParseError, Prov
 use crate::http::problem::Problem;
 use actix_http::Response;
 use actix_web::{
-  get,
   http::{header, Cookie, StatusCode},
   web, HttpResponse,
 };
@@ -18,7 +17,6 @@ impl From<ProviderNameParseError> for Problem<AuthenticationProblem> {
 }
 
 /// Start authentication with the specified provider
-#[get("/authentication/{provider}")]
 pub async fn start_authentication(
   provider_registry: web::Data<ProviderRegistry>,
   path: web::Path<(String,)>,
