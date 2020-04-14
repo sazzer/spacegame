@@ -2,7 +2,7 @@ use super::problem::AuthenticationProblem;
 use crate::authentication::{Provider, ProviderName, ProviderRegistry};
 use crate::http::problem::Problem;
 use actix_http::Response;
-use actix_web::{http::StatusCode, web, HttpRequest};
+use actix_web::{http::StatusCode, web, HttpRequest, HttpResponse};
 use std::collections::HashMap;
 
 /// Complete authentication with the specified provider
@@ -36,5 +36,7 @@ pub async fn complete_authentication(
     params
   );
 
-  todo!()
+  provider.complete(params).await;
+
+  Ok(HttpResponse::Ok().finish())
 }

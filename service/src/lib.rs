@@ -10,7 +10,9 @@ pub struct Settings {
   pub database_url: String,
 
   pub google_auth_url: Option<String>,
+  pub google_token_url: Option<String>,
   pub google_client_id: Option<String>,
+  pub google_client_secret: Option<String>,
   pub google_redirect_url: Option<String>,
 }
 
@@ -23,7 +25,9 @@ pub async fn main(settings: Settings) {
 
     google_settings: crate::authentication::google::GoogleSettings::default()
       .with_auth_url(settings.google_auth_url)
+      .with_token_url(settings.google_token_url)
       .with_client_id(settings.google_client_id)
+      .with_client_secret(settings.google_client_secret)
       .with_redirect_url(settings.google_redirect_url),
   };
 

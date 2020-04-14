@@ -1,4 +1,6 @@
+use super::AuthenticationError;
 use async_trait::async_trait;
+use std::collections::HashMap;
 
 /// Details needed to start authentication with a provider
 pub struct StartAuthentication {
@@ -11,4 +13,7 @@ pub struct StartAuthentication {
 pub trait Provider: Send + Sync {
   /// Start authentication with the provider
   fn start(&self) -> StartAuthentication;
+
+  /// Complete the authentication process, returning the Player that has just authenticated
+  async fn complete(&self, params: HashMap<String, String>) -> Result<String, AuthenticationError>;
 }

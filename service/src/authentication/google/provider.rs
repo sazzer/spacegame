@@ -1,5 +1,7 @@
 use super::GoogleSettings;
-use crate::authentication::{Provider, StartAuthentication};
+use crate::authentication::{AuthenticationError, Provider, StartAuthentication};
+use async_trait::async_trait;
+use std::collections::HashMap;
 use uritemplate::UriTemplate;
 use uuid::Uuid;
 
@@ -15,6 +17,7 @@ impl GoogleProvider {
   }
 }
 
+#[async_trait]
 impl Provider for GoogleProvider {
   /// Start authentication with the provider
   fn start(&self) -> StartAuthentication {
@@ -32,6 +35,30 @@ impl Provider for GoogleProvider {
       redirect_url: result_url,
       nonce: Some(nonce),
     }
+  }
+
+  /// Complete the authentication process, returning the Player that has just authenticated
+  async fn complete(&self, params: HashMap<String, String>) -> Result<String, AuthenticationError> {
+    let client = reqwest::Client::new();
+    let params = [
+      ("grant_type", "authorization_code"),
+      ("client_id", self.settings.client_id.as_ref()),
+      ("client_secret", self.settings.client_secret.as_ref()),
+      ("redirect_uri", self.settings.redirect_url.as_ref()),
+      ("code", params.get("code").unwrap().as_ref()),
+    ];
+    let response = client
+      .post(&self.settings.token_url)
+      .form(&params)
+      .send()
+      .await
+      .map_err(|e| {
+        log::warn!("Failed to communicate with Google: {}", e);
+        AuthenticationError::UnknownError
+      })?;
+    log::debug!("Response from Google: {:#?}", response);
+
+    Ok("".to_owned())
   }
 }
 

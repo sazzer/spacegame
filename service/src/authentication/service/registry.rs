@@ -30,15 +30,24 @@ impl ProviderRegistry {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::authentication::StartAuthentication;
+  use crate::authentication::*;
+  use async_trait::async_trait;
   use galvanic_assert::{
     assert_that,
     matchers::{collection::*, *},
   };
 
   struct FakeProvider {}
+  #[async_trait]
   impl Provider for FakeProvider {
     fn start(&self) -> StartAuthentication {
+      todo!()
+    }
+    /// Complete the authentication process, returning the Player that has just authenticated
+    async fn complete(
+      &self,
+      params: HashMap<String, String>,
+    ) -> Result<String, AuthenticationError> {
       todo!()
     }
   }
