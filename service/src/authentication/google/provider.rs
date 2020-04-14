@@ -1,6 +1,7 @@
 use super::GoogleSettings;
 use crate::authentication::{AuthenticationError, Provider, StartAuthentication};
 use async_trait::async_trait;
+use serde::Deserialize;
 use std::collections::HashMap;
 use uritemplate::UriTemplate;
 use uuid::Uuid;
@@ -15,6 +16,12 @@ impl GoogleProvider {
   pub fn new(settings: GoogleSettings) -> Self {
     Self { settings: settings }
   }
+}
+
+/// The shape of the Access Token details retrieved from Google
+#[derive(Debug, Deserialize)]
+struct GoogleToken {
+  id_token: Option<String>,
 }
 
 #[async_trait]
@@ -57,6 +64,11 @@ impl Provider for GoogleProvider {
         AuthenticationError::UnknownError
       })?;
     log::debug!("Response from Google: {:#?}", response);
+    let body: GoogleToken = response.json().await.map_err(|e| {
+      log::warn!("Failed to deserialize response from Google: {}", e);
+      AuthenticationError::UnknownError
+    })?;
+    log::debug!("Response from Google: {:#?}", body);
 
     Ok("".to_owned())
   }

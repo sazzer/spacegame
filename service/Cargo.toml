@@ -35,7 +35,7 @@ futures = "0.3.4"
 uuid = { version = "0.8.1", features = ["v4"] }
 uritemplate = "0.1.2"
 url = "2.1.1"
-reqwest = "0.10.4"
+reqwest = { version = "0.10.4", features = ["json"] }
 
 [dev-dependencies]
 faux = "0.0.4"
