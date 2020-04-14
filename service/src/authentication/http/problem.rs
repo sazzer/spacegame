@@ -1,4 +1,6 @@
-use crate::http::problem::ProblemType;
+use crate::authentication::ProviderNameParseError;
+use crate::http::problem::{Problem, ProblemType};
+use actix_web::http::StatusCode;
 
 #[derive(thiserror::Error, Debug, PartialEq)]
 pub enum AuthenticationProblem {
@@ -19,5 +21,14 @@ impl ProblemType for AuthenticationProblem {
         "tag:spacegame,2020:authentication/problems/unknown-provider"
       }
     }
+  }
+}
+
+impl From<ProviderNameParseError> for Problem<AuthenticationProblem> {
+  fn from(_e: ProviderNameParseError) -> Problem<AuthenticationProblem> {
+    Problem::new(
+      AuthenticationProblem::InvalidProviderName,
+      StatusCode::BAD_REQUEST,
+    )
   }
 }

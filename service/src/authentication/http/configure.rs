@@ -18,5 +18,9 @@ pub fn configure_authentication(
       "/authentication/{provider}",
       web::get().to(super::start::start_authentication),
     );
+    cfg.route(
+      "/authentication/{provider}/complete",
+      web::get().to(super::complete::complete_authentication),
+    );
   })
 }

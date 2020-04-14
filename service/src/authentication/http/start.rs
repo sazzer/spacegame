@@ -1,20 +1,11 @@
 use super::problem::AuthenticationProblem;
-use crate::authentication::{Provider, ProviderName, ProviderNameParseError, ProviderRegistry};
+use crate::authentication::{Provider, ProviderName, ProviderRegistry};
 use crate::http::problem::Problem;
 use actix_http::Response;
 use actix_web::{
   http::{header, Cookie, StatusCode},
   web, HttpResponse,
 };
-
-impl From<ProviderNameParseError> for Problem<AuthenticationProblem> {
-  fn from(_e: ProviderNameParseError) -> Problem<AuthenticationProblem> {
-    Problem::new(
-      AuthenticationProblem::InvalidProviderName,
-      StatusCode::BAD_REQUEST,
-    )
-  }
-}
 
 /// Start authentication with the specified provider
 pub async fn start_authentication(
