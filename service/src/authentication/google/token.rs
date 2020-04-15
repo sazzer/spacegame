@@ -1,3 +1,4 @@
+use crate::players::{PlayerLogin, Registration};
 use serde::Deserialize;
 use std::convert::TryFrom;
 
@@ -31,9 +32,26 @@ impl TryFrom<GoogleToken> for GoogleClaims {
   fn try_from(token: GoogleToken) -> Result<Self, Self::Error> {
     let id_token = token.id_token.ok_or(ClaimsError::MissingIdToken)?;
 
-    let token = jsonwebtoken::dangerous_unsafe_decode::<GoogleClaims>(&id_token);
+    let token = jsonwebtoken::dangerous_unsafe_decode::<GoogleClaims>(&id_token).map_err(|e| {
+      log::warn!("Failed to deserialize ID Token from Google: {}", e);
+      ClaimsError::UnknownError
+    })?;
     log::info!("Decoded claims: {:?}", token);
 
-    Err(ClaimsError::UnknownError)
+    Ok(token.claims)
+  }
+}
+
+impl From<GoogleClaims> for Registration {
+  fn from(claims: GoogleClaims) -> Self {
+    Self {
+      name: claims.name.unwrap_or("".to_owned()),
+      avatar: claims.picture,
+      login: PlayerLogin {
+        provider_name: "google".parse().unwrap(),
+        provider_id: claims.sub.clone(),
+        display_name: claims.email.unwrap_or(claims.sub),
+      },
+    }
   }
 }

@@ -1,6 +1,7 @@
 use super::token::{GoogleClaims, GoogleToken};
 use super::GoogleSettings;
 use crate::authentication::{AuthenticationError, Provider, StartAuthentication};
+use crate::players::{service::PlayerService, Player, PlayerRegistration};
 use async_trait::async_trait;
 use std::collections::HashMap;
 use std::convert::TryInto;
@@ -10,12 +11,16 @@ use uuid::Uuid;
 /// Authentication Provider for authenticating with Google
 pub struct GoogleProvider {
   settings: GoogleSettings,
+  player_service: PlayerService,
 }
 
 impl GoogleProvider {
   /// Construct the Google Provider
-  pub fn new(settings: GoogleSettings) -> Self {
-    Self { settings: settings }
+  pub fn new(settings: GoogleSettings, player_service: PlayerService) -> Self {
+    Self {
+      settings: settings,
+      player_service: player_service,
+    }
   }
 }
 
@@ -40,7 +45,7 @@ impl Provider for GoogleProvider {
   }
 
   /// Complete the authentication process, returning the Player that has just authenticated
-  async fn complete(&self, params: HashMap<String, String>) -> Result<String, AuthenticationError> {
+  async fn complete(&self, params: HashMap<String, String>) -> Result<Player, AuthenticationError> {
     let client = reqwest::Client::new();
     let params = [
       ("grant_type", "authorization_code"),
@@ -71,7 +76,13 @@ impl Provider for GoogleProvider {
     })?;
     log::debug!("Response from Google: {:#?}", id_token);
 
-    Ok("".to_owned())
+    let player = self
+      .player_service
+      .register_player(id_token.into())
+      .await
+      .unwrap();
+
+    Ok(player)
   }
 }
 
@@ -86,11 +97,15 @@ mod tests {
 
   #[test]
   fn test_start_authentication() {
-    let sut = GoogleProvider::new(GoogleSettings {
-      client_id: "googleClientId".to_owned(),
-      redirect_url: "http://localhost:8000/authentication/google/callback".to_owned(),
-      ..Default::default()
-    });
+    let player_service = crate::players::service::PlayerService::faux();
+    let sut = GoogleProvider::new(
+      GoogleSettings {
+        client_id: "googleClientId".to_owned(),
+        redirect_url: "http://localhost:8000/authentication/google/callback".to_owned(),
+        ..Default::default()
+      },
+      player_service,
+    );
 
     let result = sut.start();
 

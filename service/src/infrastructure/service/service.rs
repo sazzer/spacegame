@@ -22,10 +22,12 @@ impl Service {
       .await
       .unwrap();
 
-    let _player_service = crate::players::configure::new_player_service(db.clone());
+    let player_service = crate::players::configure::new_player_service(db.clone());
 
-    let provider_registry =
-      crate::authentication::configure::configure_provider_registry(settings.google_settings);
+    let provider_registry = crate::authentication::configure::configure_provider_registry(
+      player_service,
+      settings.google_settings,
+    );
 
     let healthchecker = crate::infrastructure::health::builder::HealthCheckerBuilder::new()
       .with_component("db", Arc::new(db.clone()))

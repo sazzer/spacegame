@@ -3,6 +3,7 @@ use crate::authentication::ProviderName;
 use crate::entity::*;
 
 /// Details of an external login for a player
+#[derive(Debug, PartialEq, Clone)]
 pub struct PlayerLogin {
   pub provider_name: ProviderName,
   pub provider_id: String,
@@ -10,6 +11,7 @@ pub struct PlayerLogin {
 }
 
 /// Data to represent a player
+#[derive(Debug, PartialEq, Clone)]
 pub struct PlayerData {
   pub name: String,
   pub avatar: String,

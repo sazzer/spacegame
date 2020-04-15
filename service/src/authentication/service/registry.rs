@@ -31,6 +31,7 @@ impl ProviderRegistry {
 mod tests {
   use super::*;
   use crate::authentication::*;
+  use crate::players::Player;
   use async_trait::async_trait;
   use galvanic_assert::{
     assert_that,
@@ -46,8 +47,8 @@ mod tests {
     /// Complete the authentication process, returning the Player that has just authenticated
     async fn complete(
       &self,
-      params: HashMap<String, String>,
-    ) -> Result<String, AuthenticationError> {
+      _params: HashMap<String, String>,
+    ) -> Result<Player, AuthenticationError> {
       todo!()
     }
   }
