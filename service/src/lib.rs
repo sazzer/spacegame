@@ -1,4 +1,5 @@
 pub mod authentication;
+pub mod entity;
 pub mod http;
 pub mod infrastructure;
 pub mod players;
